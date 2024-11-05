@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:leafolyze/screens/loginPage.dart';
 import 'package:leafolyze/screens/splash.dart';
 
 void main() {
