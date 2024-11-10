@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:leafolyze/screens/splash_screen.dart';
+import 'package:leafolyze/screens/onboarding/splash_screen.dart';
 
 void main() {
   runApp(const MainApp());
