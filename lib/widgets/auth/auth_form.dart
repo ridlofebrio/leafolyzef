@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:leafolyze/constants/color.dart';
+import 'package:leafolyze/utils/constants.dart';
 import 'package:leafolyze/widgets/rounded_button.dart';
 
 class InputField {
@@ -16,14 +16,14 @@ class InputField {
   });
 }
 
-class AuthFormWidget extends StatelessWidget {
+class AuthForm extends StatelessWidget {
   final String title;
   final String subtitle;
   final String buttonText;
   final List<InputField> inputFields;
   final bool showForgotPassword;
 
-  const AuthFormWidget({
+  const AuthForm({
     super.key,
     required this.title,
     required this.subtitle,

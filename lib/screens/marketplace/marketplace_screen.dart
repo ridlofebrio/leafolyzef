@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:leafolyze/constants/color.dart';
-import 'package:leafolyze/widgets/product_card.dart';
+import 'package:leafolyze/utils/constants.dart';
+import 'package:leafolyze/widgets/common/custom_search_bar.dart';
+import 'package:leafolyze/widgets/marketplace/product_card.dart';
 
 class MarketplaceScreen extends StatefulWidget {
   const MarketplaceScreen({super.key});
@@ -58,16 +59,11 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Search here...',
-                      prefixIcon: const Icon(Icons.search),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                    ),
+                  padding: const EdgeInsets.all(16.0),
+                  child: CustomSearchBar(
+                    // TODO: Implement search functionality
+                    onChanged: (value) {},
+                    onSubmitted: (value) {},
                   ),
                 ),
                 SizedBox(height: 8),

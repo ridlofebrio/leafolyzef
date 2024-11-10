@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:leafolyze/widgets/auth_form_widget.dart';
-import 'package:leafolyze/widgets/driver_text_widget.dart';
-import 'package:leafolyze/widgets/logo_section_widget.dart';
+import 'package:leafolyze/widgets/auth/auth_form.dart';
+import 'package:leafolyze/widgets/auth/driver_text_widget.dart';
+import 'package:leafolyze/widgets/auth/logo_section_widget.dart';
 
 final List<InputField> loginInputFields = [
   const InputField(
@@ -37,12 +37,12 @@ class LoginScreen extends StatelessWidget {
                   clipBehavior: Clip.none,
                   children: [
                     Image.asset(
-                      'lib/assets/images/group-243.png',
+                      'assets/images/group-243.png',
                     ),
                   ],
                 ),
                 const SizedBox(height: 18),
-                AuthFormWidget(
+                AuthForm(
                   title: 'Welcome Back',
                   subtitle: 'Sign in to continue',
                   buttonText: 'Log In',

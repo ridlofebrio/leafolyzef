@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:leafolyze/widgets/artikel_item_card.dart';
+import 'package:leafolyze/widgets/home/article_item_card.dart';
+import 'package:leafolyze/widgets/common/custom_search_bar.dart';
 
-class ArtikelListScreen extends StatelessWidget {
-  const ArtikelListScreen({Key? key}) : super(key: key);
+class ArticleListScreen extends StatelessWidget {
+  const ArticleListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -28,25 +29,17 @@ class ArtikelListScreen extends StatelessWidget {
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: 'Search here...',
-                  prefixIcon: const Icon(Icons.search),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: BorderSide.none,
-                  ),
-                  filled: true,
-                  fillColor: Colors.grey.shade200,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                ),
+              child: CustomSearchBar(
+                // TODO: Implement search functionality
+                onChanged: (value) {},
+                onSubmitted: (value) {},
               ),
             ),
           ),
           SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, index) {
-                return ArtikelCard(
+                return ArticleItemCard(
                   imageUrl:
                       'https://static.promediateknologi.id/crop/0x0:0x0/0x0/webp/photo/p2/222/2024/05/28/IMG-20240528-WA0105-1208872859.jpg',
                   title: 'Bacterial Spot',

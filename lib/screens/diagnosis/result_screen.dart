@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:leafolyze/constants/color.dart';
-import 'package:leafolyze/views/saveDialog.dart';
+import 'package:leafolyze/utils/constants.dart';
+import 'package:leafolyze/widgets/diagnosis/save_dialog_widget.dart';
 
 class ResultScreen extends StatelessWidget {
   final String title;
@@ -14,7 +14,8 @@ class ResultScreen extends StatelessWidget {
   final String status2;
   final String timestamp;
 
-  ResultScreen({
+  const ResultScreen({
+    super.key,
     required this.title,
     required this.imageUrl,
     required this.description,
@@ -58,7 +59,6 @@ class ResultScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                 
                     Container(
                       padding: const EdgeInsets.all(16.0),
                       margin: const EdgeInsets.symmetric(vertical: 8.0),
@@ -188,7 +188,7 @@ class ResultScreen extends StatelessWidget {
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
-                          return SaveDialog();
+                          return SaveDialogWidget();
                         },
                       );
                     },

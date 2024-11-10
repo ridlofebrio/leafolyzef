@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:leafolyze/widgets/auth_form_widget.dart';
-import 'package:leafolyze/widgets/driver_text_widget.dart';
-import 'package:leafolyze/widgets/logo_section_widget.dart';
+import 'package:leafolyze/widgets/auth/auth_form.dart';
+import 'package:leafolyze/widgets/auth/driver_text_widget.dart';
+import 'package:leafolyze/widgets/auth/logo_section_widget.dart';
 
 final List<InputField> registerInputFields = [
   const InputField(
@@ -40,7 +40,7 @@ class RegisterScreen extends StatelessWidget {
                 Stack(
                   clipBehavior: Clip.none,
                   children: [
-                    AuthFormWidget(
+                    AuthForm(
                       title: 'Join Us',
                       subtitle: 'Grow with us',
                       buttonText: 'Register',
@@ -50,7 +50,7 @@ class RegisterScreen extends StatelessWidget {
                       right: 0,
                       top: -181.5,
                       child: Image.asset(
-                        'lib/assets/images/undraw_enter_uhqk 1.png',
+                        'assets/images/undraw_enter_uhqk 1.png',
                         width: 224,
                         height: 248,
                       ),
