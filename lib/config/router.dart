@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:leafolyze/core/screens/diagnosis/camera_screen.dart';
-import 'package:leafolyze/core/screens/home/article_detail_screen.dart';
+import 'package:leafolyze/core/screens/history/history_screen.dart';
 import 'package:leafolyze/core/screens/home/article_list_screen.dart';
 import 'package:leafolyze/core/screens/home/home_screen.dart';
 import 'package:leafolyze/core/screens/marketplace/marketplace_screen.dart';
 import 'package:leafolyze/core/screens/marketplace/product_list_screen.dart';
 import 'package:leafolyze/core/screens/onboarding/landing_screen.dart';
+import 'package:leafolyze/core/screens/onboarding/splash_screen.dart';
 import 'package:leafolyze/core/screens/auth/login_screen.dart';
 import 'package:leafolyze/core/screens/auth/register_screen.dart';
 import 'package:leafolyze/core/home.dart';
@@ -23,7 +24,7 @@ final goRouter = GoRouter(
     // Onboarding routes
     GoRoute(
       path: '/',
-      builder: (context, state) => const ArticleDetailScreen(),
+      builder: (context, state) => const SplashScreen(),
     ),
     GoRoute(
       path: '/landing',
@@ -78,8 +79,7 @@ final goRouter = GoRouter(
         // History tab
         GoRoute(
           path: '/history',
-          builder: (context, state) =>
-              const Center(child: Text("History Page")),
+          builder: (context, state) => const HistoryScreen(),
         ),
         // Profile tab
         GoRoute(
