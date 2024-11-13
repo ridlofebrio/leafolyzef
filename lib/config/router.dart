@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:leafolyze/core/screens/diagnosis/camera_screen.dart';
 import 'package:leafolyze/core/screens/history/history_screen.dart';
+import 'package:leafolyze/core/screens/home/article_detail_screen.dart';
 import 'package:leafolyze/core/screens/home/article_list_screen.dart';
 import 'package:leafolyze/core/screens/home/home_screen.dart';
 import 'package:leafolyze/core/screens/marketplace/marketplace_screen.dart';
@@ -21,7 +22,6 @@ final goRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: '/',
   routes: [
-    // Onboarding routes
     GoRoute(
       path: '/',
       builder: (context, state) => const SplashScreen(),
@@ -30,8 +30,6 @@ final goRouter = GoRouter(
       path: '/landing',
       builder: (context, state) => const LandingScreen(),
     ),
-
-    // Auth routes
     GoRoute(
       path: '/login',
       builder: (context, state) => const LoginScreen(),
@@ -40,15 +38,12 @@ final goRouter = GoRouter(
       path: '/register',
       builder: (context, state) => const RegisterScreen(),
     ),
-
-    // Main app shell route
     ShellRoute(
       navigatorKey: _shellNavigatorKey,
       builder: (context, state, child) {
         return Home(child: child);
       },
       routes: [
-        // Home tab
         GoRoute(
           path: '/home',
           builder: (context, state) => const HomeScreen(),
@@ -57,6 +52,13 @@ final goRouter = GoRouter(
               path: 'article',
               parentNavigatorKey: _rootNavigatorKey,
               builder: (context, state) => const ArticleListScreen(),
+              routes: [
+                GoRoute(
+                  path: 'detail',
+                  parentNavigatorKey: _rootNavigatorKey,
+                  builder: (context, state) => const ArticleDetailScreen(),
+                ),
+              ],
             ),
           ],
         ),
@@ -64,7 +66,6 @@ final goRouter = GoRouter(
           path: '/diagnose',
           builder: (context, state) => const CameraScreen(),
         ),
-        // Marketplace tab
         GoRoute(
           path: '/marketplace',
           builder: (context, state) => const MarketplaceScreen(),
@@ -76,12 +77,10 @@ final goRouter = GoRouter(
             ),
           ],
         ),
-        // History tab
         GoRoute(
           path: '/history',
           builder: (context, state) => const HistoryScreen(),
         ),
-        // Profile tab
         GoRoute(
           path: '/profile',
           builder: (context, state) => const ProfileScreen(
