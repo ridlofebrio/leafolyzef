@@ -3,10 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:leafolyze/blocs/auth/auth_bloc.dart';
 import 'package:leafolyze/blocs/auth/auth_event.dart';
+import 'package:leafolyze/blocs/history/history_bloc.dart';
+import 'package:leafolyze/blocs/history/history_event.dart';
 import 'package:leafolyze/blocs/marketplace/marketplace_bloc.dart';
 import 'package:leafolyze/blocs/marketplace/marketplace_event.dart';
 import 'package:leafolyze/config/router.dart';
+import 'package:leafolyze/core/screens/history/history_screen.dart';
 import 'package:leafolyze/repositories/auth_repository.dart';
+import 'package:leafolyze/repositories/history_repository.dart';
 import 'package:leafolyze/repositories/marketplace_repository.dart';
 import 'package:leafolyze/services/api_service.dart';
 import 'package:leafolyze/services/storage_service.dart';
@@ -47,6 +51,12 @@ class MainApp extends StatelessWidget {
           create: (context) => MarketplaceBloc(
             MarketplaceRepository(apiService),
           )..add(LoadProducts()),
+        ),
+        BlocProvider(
+          create: (context) => GambarMLBloc(
+            GambarMLRepository(apiService),
+          )..add(FetchAllGambarML()),
+          child: const HistoryScreen(),
         ),
       ],
       child: MaterialApp.router(

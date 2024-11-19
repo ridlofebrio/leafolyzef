@@ -3,19 +3,19 @@ import 'package:equatable/equatable.dart';
 class GambarML extends Equatable {
   final String gambarUrl;
   final int userId;
-  final String deskripsi;
+  final String description;
 
-  GambarML({
+  const GambarML({
     required this.gambarUrl,
     required this.userId,
-    required this.deskripsi,
+    required this.description,
   });
 
   factory GambarML.fromJson(Map<String, dynamic> json) {
     return GambarML(
-      gambarUrl: json['gambarUrl'],
-      userId: json['user_id'],
-      deskripsi: json['deskripsi'],
+      gambarUrl: json['gambarUrl'] ?? '', // Default value if null
+      userId: json['user_id'] ?? 0, // Default value if null
+      description: json['description'] ?? 'No description', // Default value if null
     );
   }
 
@@ -23,7 +23,7 @@ class GambarML extends Equatable {
     return {
       'gambarUrl': gambarUrl,
       'user_id': userId,
-      'deskripsi': deskripsi,
+      'description': description,
     };
   }
 
@@ -31,6 +31,6 @@ class GambarML extends Equatable {
   List<Object?> get props => [
         gambarUrl,
         userId,
-        deskripsi,
+        description,
       ];
 }
