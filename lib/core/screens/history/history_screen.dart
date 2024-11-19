@@ -43,7 +43,7 @@ class HistoryScreen extends StatelessWidget {
                       // You can trigger search functionality if needed
                     },
                     onSubmitted: (value) {
-                      // Implement search logic here if needed
+                 
                     },
                   ),
                   const SizedBox(height: AppSpacing.spacingM),
