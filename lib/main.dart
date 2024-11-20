@@ -7,11 +7,14 @@ import 'package:leafolyze/blocs/history/history_bloc.dart';
 import 'package:leafolyze/blocs/history/history_event.dart';
 import 'package:leafolyze/blocs/marketplace/marketplace_bloc.dart';
 import 'package:leafolyze/blocs/marketplace/marketplace_event.dart';
+import 'package:leafolyze/blocs/profile/profile_bloc.dart';
+import 'package:leafolyze/blocs/profile/profile_event.dart';
 import 'package:leafolyze/config/router.dart';
 import 'package:leafolyze/repositories/article_repository.dart';
 import 'package:leafolyze/repositories/auth_repository.dart';
 import 'package:leafolyze/repositories/history_repository.dart';
 import 'package:leafolyze/repositories/marketplace_repository.dart';
+import 'package:leafolyze/repositories/profile_repository.dart';
 import 'package:leafolyze/services/api_service.dart';
 import 'package:leafolyze/services/storage_service.dart';
 
@@ -69,8 +72,13 @@ class MainApp extends StatelessWidget {
               GambarMLRepository(apiService),
             )..add(FetchAllGambarML()),
           ),
+          BlocProvider(
+            create: (context) =>
+                ProfileBloc(repository: ProfileRepository(apiService)),
+          ),
         ],
         child: MaterialApp.router(
+          debugShowCheckedModeBanner: false,
           title: 'Leafolyze',
           theme: ThemeData(
             fontFamily: GoogleFonts.plusJakartaSans().fontFamily,

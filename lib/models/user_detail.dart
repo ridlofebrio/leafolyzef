@@ -7,7 +7,7 @@ class UserDetail extends Equatable {
   final String? birth;
   final String? gender;
   final String? address;
-  final String? imageUrl;
+  final String? gambarUrl;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -18,7 +18,7 @@ class UserDetail extends Equatable {
     this.birth,
     this.gender,
     this.address,
-    this.imageUrl,
+    this.gambarUrl,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -31,7 +31,7 @@ class UserDetail extends Equatable {
       birth: json['birth'],
       gender: json['gender'],
       address: json['address'],
-      imageUrl: json['gambarUrl'],
+      gambarUrl: json['gambarUrl'],
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['updated_at']),
     );
@@ -45,7 +45,7 @@ class UserDetail extends Equatable {
       'birth': birth,
       'gender': gender,
       'address': address,
-      'imageUrl': imageUrl,
+      'gambarUrl': gambarUrl,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
     };
@@ -59,7 +59,7 @@ class UserDetail extends Equatable {
         birth,
         gender,
         address,
-        imageUrl,
+        gambarUrl,
         createdAt,
         updatedAt,
       ];
