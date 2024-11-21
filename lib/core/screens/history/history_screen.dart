@@ -42,43 +42,43 @@ class HistoryScreen extends StatelessWidget {
                     onChanged: (value) {
                       // You can trigger search functionality if needed
                     },
-                    onSubmitted: (value) {
-                 
-                    },
+                    onSubmitted: (value) {},
                   ),
                   const SizedBox(height: AppSpacing.spacingM),
-                  BlocBuilder<GambarMLBloc, GambarMLState>(
+                  BlocBuilder<HistoryBloc, HistoryState>(
                     builder: (context, state) {
-                      if (state is GambarMLLoading) {
+                      if (state is HistoryLoading) {
                         return const Center(
                           child: CircularProgressIndicator(),
                         );
-                      } else if (state is GambarMLLoaded) {
-                        final data = state.gambarMLList;
-                        if (data.isEmpty) {
+                      } else if (state is HistoryLoaded) {
+                        final detections = state.detections;
+                        if (detections.isEmpty) {
                           return const Center(
-                            child: Text('No history available'),
+                            child: Text('No detections available'),
                           );
                         }
                         return Column(
-                          children: data.asMap().entries.map((entry) {
+                          children: detections.asMap().entries.map((entry) {
                             final index = entry.key;
-                            final gambar = entry.value;
+                            final detection = entry.value;
                             return Padding(
                               padding: EdgeInsets.only(
-                                bottom: index != data.length - 1
+                                bottom: index != detections.length - 1
                                     ? AppSpacing.spacingM
                                     : 0,
                               ),
                               child: DiagnosisItem(
-                                imagePath: gambar.gambarUrl,
-                                plantName: 'Unknown Plant',
-                                diseaseName: gambar.description,
+                                imagePath: detection.image?.path ?? '',
+                                plantName: detection.title,
+                                diseaseName: detection.diseases?[0].name ?? '',
+                                // Add any additional properties from TomatoLeafDetection
+                                // that you want to display
                               ),
                             );
                           }).toList(),
                         );
-                      } else if (state is GambarMLError) {
+                      } else if (state is HistoryError) {
                         return Center(
                           child: Text(
                             'Error: ${state.error}',
@@ -87,7 +87,8 @@ class HistoryScreen extends StatelessWidget {
                         );
                       }
                       return const Center(
-                        child: Text('Start fetching your history'),
+                        child:
+                            Text('Start scanning leaves to see your history'),
                       );
                     },
                   ),

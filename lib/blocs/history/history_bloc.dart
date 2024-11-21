@@ -1,27 +1,25 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:leafolyze/blocs/history/history_event.dart';
 import 'package:leafolyze/blocs/history/history_state.dart';
-import 'package:leafolyze/repositories/history_repository.dart';
+import 'package:leafolyze/repositories/detection_repository.dart';
 
+class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
+  final DetectionRepository _repository;
 
-class GambarMLBloc extends Bloc<GambarMLEvent, GambarMLState> {
-  final GambarMLRepository repository;
-
-  GambarMLBloc(this.repository) : super(GambarMLInitial()) {
-    on<FetchAllGambarML>(_onFetchAllGambarML);
-    on<FetchGambarByUserId>(_onFetchGambarByUserId);
+  HistoryBloc(this._repository) : super(HistoryInitial()) {
+    on<LoadDetections>(_onLoadDetections);
   }
 
-
-
-  Future<void> _onFetchGambarByUserId(
-      FetchGambarByUserId event, Emitter<GambarMLState> emit) async {
-    emit(GambarMLLoading());
+  Future<void> _onLoadDetections(
+    LoadDetections event,
+    Emitter<HistoryState> emit,
+  ) async {
+    emit(HistoryLoading());
     try {
-      final gambarMLList = await repository.getGambarByUserId(event.userId);
-      emit(GambarMLLoaded(gambarMLList));
+      final detections = await _repository.getAllDetections();
+      emit(HistoryLoaded(detections));
     } catch (e) {
-      emit(GambarMLError('Failed to fetch GambarML for userId ${event.userId}: $e'));
+      emit(HistoryError(e.toString()));
     }
   }
 }

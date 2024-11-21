@@ -71,7 +71,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         birth: event.birth,
         gender: event.gender,
         address: event.address,
-        access: event.access,
+        access: 'petani',
       );
       emit(Authenticated(user));
       _startRefreshTimer();

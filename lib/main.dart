@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:leafolyze/blocs/article/article_bloc.dart';
+import 'package:leafolyze/blocs/article/article_event.dart';
 import 'package:leafolyze/blocs/auth/auth_bloc.dart';
 import 'package:leafolyze/blocs/auth/auth_event.dart';
 import 'package:leafolyze/blocs/history/history_bloc.dart';
@@ -12,7 +14,7 @@ import 'package:leafolyze/config/router.dart';
 import 'package:leafolyze/models/auth_token.dart';
 import 'package:leafolyze/repositories/article_repository.dart';
 import 'package:leafolyze/repositories/auth_repository.dart';
-import 'package:leafolyze/repositories/history_repository.dart';
+import 'package:leafolyze/repositories/detection_repository.dart';
 import 'package:leafolyze/repositories/product_repository.dart';
 import 'package:leafolyze/repositories/profile_repository.dart';
 import 'package:leafolyze/services/api_service.dart';
@@ -49,14 +51,25 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        RepositoryProvider<ApiService>(
-          create: (context) => apiService,
-        ),
-        RepositoryProvider<StorageService>(
-          create: (context) => storageService,
-        ),
+        RepositoryProvider<ApiService>(create: (context) => apiService),
+        RepositoryProvider<StorageService>(create: (context) => storageService),
         RepositoryProvider<ArticleRepository>(
-          create: (context) => ArticleRepository(apiService),
+          create: (context) => ArticleRepository(
+            context.read<ApiService>(),
+            context.read<StorageService>(),
+          ),
+        ),
+        RepositoryProvider<ProfileRepository>(
+          create: (context) => ProfileRepository(
+            context.read<ApiService>(),
+            context.read<StorageService>(),
+          ),
+        ),
+        RepositoryProvider<DetectionRepository>(
+          create: (context) => DetectionRepository(
+            context.read<ApiService>(),
+            context.read<StorageService>(),
+          ),
         ),
       ],
       child: MultiBlocProvider(
@@ -66,18 +79,23 @@ class MainApp extends StatelessWidget {
               ..add(AuthCheckRequested()),
           ),
           BlocProvider(
+            create: (context) => ArticleBloc(context.read<ArticleRepository>())
+              ..add(LoadArticles()),
+          ),
+          BlocProvider(
+            create: (context) => ProfileBloc(
+              repository: context.read<ProfileRepository>(),
+            ),
+          ),
+          BlocProvider(
+            create: (context) => HistoryBloc(
+              context.read<DetectionRepository>(),
+            )..add(LoadDetections()),
+          ),
+             BlocProvider(
             create: (context) => ProductBloc(
               ProductRepository(apiService, storageService),
             )..add(LoadProducts()),
-          ),
-          BlocProvider(
-            create: (context) => GambarMLBloc(
-              GambarMLRepository(apiService),
-            )..add(FetchAllGambarML()),
-          ),
-          BlocProvider(
-            create: (context) =>
-                ProfileBloc(repository: ProfileRepository(apiService)),
           ),
         ],
         child: MaterialApp.router(
