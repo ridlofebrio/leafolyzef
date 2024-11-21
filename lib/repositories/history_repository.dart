@@ -9,7 +9,7 @@ class GambarMLRepository {
   // Fetch GambarML by userId
   Future<List<GambarML>> getGambarByUserId(int userId) async {
     try {
-      final response = await _apiService.get('/machinelearning', queryParams: {
+      final response = await _apiService.get('/detections', queryParams: {
         'user_id': userId,
       });
 
@@ -28,7 +28,7 @@ class GambarMLRepository {
   // Fetch all GambarML
   Future<List<GambarML>> getGambarML() async {
     try {
-      final response = await _apiService.get('/machinelearning');
+      final response = await _apiService.get('/detections');
 
       if (response['success']) {
         final List<dynamic> gambarJson = response['data'];

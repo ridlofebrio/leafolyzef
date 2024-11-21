@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:leafolyze/models/image.dart';
 
 class Shop extends Equatable {
   final int id;
@@ -7,7 +8,7 @@ class Shop extends Equatable {
   final String address;
   final String description;
   final String operational;
-  final String gambarUrl;
+  final Image? image;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -18,7 +19,7 @@ class Shop extends Equatable {
     required this.address,
     required this.description,
     required this.operational,
-    required this.gambarUrl,
+    this.image,
     this.createdAt,
     this.updatedAt,
   });
@@ -31,7 +32,7 @@ class Shop extends Equatable {
       address: json['address'],
       description: json['description'],
       operational: json['operational'],
-      gambarUrl: json['gambarUrl'],
+      image: json['image'] != null ? Image.fromJson(json['image']) : null,
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'])
           : null,
@@ -49,10 +50,34 @@ class Shop extends Equatable {
       'address': address,
       'description': description,
       'operational': operational,
-      'gambarUrl': gambarUrl,
+      'image': image?.toJson(),
       'created_at': createdAt?.toIso8601String(),
       'updated_at': updatedAt?.toIso8601String(),
     };
+  }
+
+  Shop copyWith({
+    int? id,
+    int? userId,
+    String? name,
+    String? address,
+    String? description,
+    String? operational,
+    Image? image,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return Shop(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      name: name ?? this.name,
+      address: address ?? this.address,
+      description: description ?? this.description,
+      operational: operational ?? this.operational,
+      image: image ?? this.image,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
   }
 
   @override
@@ -63,7 +88,7 @@ class Shop extends Equatable {
         address,
         description,
         operational,
-        gambarUrl,
+        image,
         createdAt,
         updatedAt,
       ];

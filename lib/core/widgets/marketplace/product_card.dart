@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:leafolyze/utils/constants.dart';
-import 'package:leafolyze/utils/string_utils.dart';
 
 class ProductCard extends StatelessWidget {
   final String imageUrl;
@@ -26,7 +25,7 @@ class ProductCard extends StatelessWidget {
         children: [
           InkWell(
             borderRadius: BorderRadius.circular(AppBorderRadius.radiusS),
-            onTap: () => context.go('/marketplace/${slugify(name)}'),
+            onTap: () => context.go('/marketplace/$id'),
             child: Container(
               padding: EdgeInsets.all(AppSpacing.spacingMS),
               decoration: BoxDecoration(

@@ -12,17 +12,6 @@ class GambarMLBloc extends Bloc<GambarMLEvent, GambarMLState> {
     on<FetchGambarByUserId>(_onFetchGambarByUserId);
   }
 
-  // Handle FetchAllGambarML event
-  Future<void> _onFetchAllGambarML(
-      FetchAllGambarML event, Emitter<GambarMLState> emit) async {
-    emit(GambarMLLoading());
-    try {
-      final gambarMLList = await repository.getGambarML();
-      emit(GambarMLLoaded(gambarMLList));
-    } catch (e) {
-      emit(GambarMLError('Failed to fetch all GambarML: $e'));
-    }
-  }
 
 
   Future<void> _onFetchGambarByUserId(
