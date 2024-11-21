@@ -8,7 +8,6 @@ import 'package:leafolyze/blocs/history/history_event.dart';
 import 'package:leafolyze/blocs/marketplace/marketplace_bloc.dart';
 import 'package:leafolyze/blocs/marketplace/marketplace_event.dart';
 import 'package:leafolyze/blocs/profile/profile_bloc.dart';
-import 'package:leafolyze/blocs/profile/profile_event.dart';
 import 'package:leafolyze/config/router.dart';
 import 'package:leafolyze/repositories/article_repository.dart';
 import 'package:leafolyze/repositories/auth_repository.dart';
