@@ -98,7 +98,7 @@ final goRouter = GoRouter(
         ),
         GoRoute(
             path: '/profile',
-             builder: (context, state) => const ProfileScreen(),
+            builder: (context, state) => const ProfileScreen(),
             routes: [
               GoRoute(
                 path: 'faq',
@@ -110,7 +110,7 @@ final goRouter = GoRouter(
                 parentNavigatorKey: _rootNavigatorKey,
                 builder: (context, state) => AboutScreen(),
               ),
-               GoRoute(
+              GoRoute(
                 path: 'personal-information',
                 parentNavigatorKey: _rootNavigatorKey,
                 builder: (context, state) => PersonalInformationScreen(),

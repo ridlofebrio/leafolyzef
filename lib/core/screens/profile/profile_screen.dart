@@ -170,7 +170,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   icon: Icons.info_outline,
                   title: "About",
                   route: () {
-                    context.go('profile/about');
+                    context.go('/profile/about');
                   },
                 ),
                 SizedBox(height: AppSpacing.spacingXL),
