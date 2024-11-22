@@ -7,6 +7,9 @@ import 'package:leafolyze/blocs/article/article_state.dart';
 import 'package:leafolyze/blocs/history/history_bloc.dart';
 import 'package:leafolyze/blocs/history/history_event.dart';
 import 'package:leafolyze/blocs/history/history_state.dart';
+import 'package:leafolyze/blocs/profile/profile_bloc.dart';
+import 'package:leafolyze/blocs/profile/profile_event.dart';
+import 'package:leafolyze/blocs/profile/profile_state.dart';
 import 'package:leafolyze/core/widgets/common/diagnosis_item.dart';
 import 'package:leafolyze/repositories/article_repository.dart';
 import 'package:leafolyze/repositories/detection_repository.dart';
@@ -23,6 +26,12 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   @override
+  void initState() {
+    super.initState();
+    context.read<ProfileBloc>().add(LoadProfile());
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
@@ -35,12 +44,13 @@ class _HomeScreenState extends State<HomeScreen> {
           )..add(LoadArticles()),
         ),
         BlocProvider(
-            create: (context) => HistoryBloc(
-                  DetectionRepository(
-                    context.read<ApiService>(),
-                    context.read<StorageService>(),
-                  ),
-                )..add(LoadDetections())),
+          create: (context) => HistoryBloc(
+            DetectionRepository(
+              context.read<ApiService>(),
+              context.read<StorageService>(),
+            ),
+          )..add(LoadDetections()),
+        ),
       ],
       child: Scaffold(
         body: SafeArea(
@@ -74,38 +84,82 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-}
 
-Widget _buildGreetingSection() {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Hi, John',
-            style: TextStyle(
-              fontSize: AppFontSize.fontSizeMS,
-              fontWeight: AppFontWeight.semiBold,
+  Widget _buildGreetingSection() {
+    return BlocBuilder<ProfileBloc, ProfileState>(
+      builder: (context, state) {
+        if (state is ProfileLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (state is ProfileError) {
+          return const Text('Error loading profile');
+        }
+        if (state is ProfileLoaded) {
+          final user = state.user.userDetail;
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Hi, ${user?.name ?? 'User'}',
+                    style: TextStyle(
+                      fontSize: AppFontSize.fontSizeMS,
+                      fontWeight: AppFontWeight.semiBold,
+                    ),
+                  ),
+                  Text(
+                    'Good Morning!',
+                    style: TextStyle(
+                      fontSize: AppFontSize.fontSizeM,
+                      fontWeight: AppFontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              CircleAvatar(
+                radius: 20,
+                backgroundImage: user?.image?.path != null
+                    ? NetworkImage(user!.image!.path)
+                    : const AssetImage('assets/images/image-11.png')
+                        as ImageProvider,
+              ),
+            ],
+          );
+        }
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                Text(
+                  'Hi, User',
+                  style: TextStyle(
+                    fontSize: AppFontSize.fontSizeMS,
+                    fontWeight: AppFontWeight.semiBold,
+                  ),
+                ),
+                Text(
+                  'Good Morning!',
+                  style: TextStyle(
+                    fontSize: AppFontSize.fontSizeM,
+                    fontWeight: AppFontWeight.bold,
+                  ),
+                ),
+              ],
             ),
-          ),
-          Text(
-            'Good Morning!',
-            style: TextStyle(
-              fontSize: AppFontSize.fontSizeM,
-              fontWeight: AppFontWeight.bold,
+            const CircleAvatar(
+              radius: 20,
+              backgroundImage: AssetImage('assets/images/default_avatar.png'),
             ),
-          ),
-        ],
-      ),
-      CircleAvatar(
-        radius: 20,
-        backgroundImage: NetworkImage(
-            'https://awsimages.detik.net.id/community/media/visual/2018/03/03/39f24229-6f26-4a17-aa92-44c3bd3dae9e_43.jpeg?w=600&q=90'),
-      ),
-    ],
-  );
+          ],
+        );
+      },
+    );
+  }
+
 }
 
 Widget _buildWateringReminder() {
