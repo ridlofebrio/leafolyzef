@@ -17,6 +17,7 @@ import 'package:leafolyze/core/screens/profile/about_screen.dart';
 import 'package:leafolyze/core/screens/profile/faq_screen.dart';
 import 'package:leafolyze/core/screens/profile/personal_information_screen.dart';
 import 'package:leafolyze/core/screens/profile/profile_screen.dart';
+import 'package:leafolyze/core/screens/profile/reset_password_screen.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<NavigatorState> _shellNavigatorKey =
@@ -98,7 +99,7 @@ final goRouter = GoRouter(
         ),
         GoRoute(
             path: '/profile',
-             builder: (context, state) => const ProfileScreen(),
+            builder: (context, state) => const ProfileScreen(),
             routes: [
               GoRoute(
                 path: 'faq',
@@ -110,10 +111,15 @@ final goRouter = GoRouter(
                 parentNavigatorKey: _rootNavigatorKey,
                 builder: (context, state) => AboutScreen(),
               ),
-               GoRoute(
+              GoRoute(
                 path: 'personal-information',
                 parentNavigatorKey: _rootNavigatorKey,
                 builder: (context, state) => PersonalInformationScreen(),
+              ),
+              GoRoute(
+                path: 'password-security',
+                parentNavigatorKey: _rootNavigatorKey,
+                builder: (context, state) => ResetPasswordScreen(),
               ),
             ]),
       ],
