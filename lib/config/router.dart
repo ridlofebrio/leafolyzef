@@ -13,6 +13,9 @@ import 'package:leafolyze/core/screens/onboarding/splash_screen.dart';
 import 'package:leafolyze/core/screens/auth/login_screen.dart';
 import 'package:leafolyze/core/screens/auth/register_screen.dart';
 import 'package:leafolyze/core/home.dart';
+import 'package:leafolyze/core/screens/profile/about_screen.dart';
+import 'package:leafolyze/core/screens/profile/faq_screen.dart';
+import 'package:leafolyze/core/screens/profile/personal_information_screen.dart';
 import 'package:leafolyze/core/screens/profile/profile_screen.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -94,9 +97,25 @@ final goRouter = GoRouter(
           builder: (context, state) => const HistoryScreen(),
         ),
         GoRoute(
-          path: '/profile',
-          builder: (context, state) => const ProfileScreen(),
-        ),
+            path: '/profile',
+             builder: (context, state) => const ProfileScreen(),
+            routes: [
+              GoRoute(
+                path: 'faq',
+                parentNavigatorKey: _rootNavigatorKey,
+                builder: (context, state) => FaqScreen(),
+              ),
+              GoRoute(
+                path: 'about',
+                parentNavigatorKey: _rootNavigatorKey,
+                builder: (context, state) => AboutScreen(),
+              ),
+               GoRoute(
+                path: 'personal-information',
+                parentNavigatorKey: _rootNavigatorKey,
+                builder: (context, state) => PersonalInformationScreen(),
+              ),
+            ]),
       ],
     ),
   ],
