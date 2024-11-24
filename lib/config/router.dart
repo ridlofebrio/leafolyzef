@@ -80,15 +80,20 @@ final goRouter = GoRouter(
             GoRoute(
               path: ':diseaseId',
               parentNavigatorKey: _rootNavigatorKey,
-              builder: (context, state) => ProductListScreen(
-                diseaseId: int.parse(state.pathParameters['diseaseId']!),
-              ),
+              builder: (context, state) {
+                final diseaseId = state.pathParameters['diseaseId'];
+                if (diseaseId == null) {
+                  return const Center(child: Text('Disease ID is missing.'));
+                }
+                return ProductListScreen(diseaseId: int.parse(diseaseId));
+              },
               routes: [
                 GoRoute(
-                  path: 'detail',
-                  parentNavigatorKey: _rootNavigatorKey,
-                  builder: (context, state) => const MarketplaceDetailScreen(),
-                ),
+                    path: 'detail',
+                    parentNavigatorKey: _rootNavigatorKey,
+                    builder: (context, state) => MarketplaceDetailScreen(
+                          id: state.pathParameters['id']!,
+                        )),
               ],
             ),
           ],

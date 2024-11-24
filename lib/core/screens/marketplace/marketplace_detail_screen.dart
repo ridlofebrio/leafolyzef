@@ -1,8 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:leafolyze/blocs/shop/shop_bloc.dart';
+import 'package:leafolyze/blocs/shop/shop_state.dart';
+import 'package:leafolyze/blocs/shop/shop_event.dart';
+import 'package:leafolyze/blocs/product/product_bloc.dart';
+import 'package:leafolyze/blocs/product/product_state.dart';
+import 'package:leafolyze/blocs/product/product_event.dart';
+import 'package:leafolyze/core/widgets/marketplace/detailed_product_card.dart';
 import 'package:leafolyze/utils/constants.dart';
 
 class MarketplaceDetailScreen extends StatefulWidget {
-  const MarketplaceDetailScreen({super.key});
+  final String id;
+
+  const MarketplaceDetailScreen({
+    super.key,
+    required this.id,
+  });
 
   @override
   State<MarketplaceDetailScreen> createState() =>
@@ -10,6 +23,15 @@ class MarketplaceDetailScreen extends StatefulWidget {
 }
 
 class _MarketplaceDetailScreenState extends State<MarketplaceDetailScreen> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<ShopBloc>().add(LoadShops());
+    context
+        .read<ProductBloc>()
+        .add(LoadProductsByShop(int.parse(widget.id)));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,7 +44,7 @@ class _MarketplaceDetailScreenState extends State<MarketplaceDetailScreen> {
           const SliverAppBar(
             centerTitle: true,
             title: Text(
-              'Profile Toko',
+              'Shop Profile',
               style: TextStyle(
                 fontSize: AppFontSize.fontSizeXXL,
                 fontWeight: AppFontWeight.semiBold,
@@ -37,154 +59,137 @@ class _MarketplaceDetailScreenState extends State<MarketplaceDetailScreen> {
             padding:
                 const EdgeInsets.symmetric(horizontal: AppSpacing.spacingM),
             sliver: SliverList(
-              delegate: SliverChildListDelegate([
-                const SizedBox(height: AppSpacing.spacingL),
-                // Store Name
-                const Text(
-                  'Toko Tanaman Sehat',
-                  style: TextStyle(
-                    fontSize: AppFontSize.fontSizeL,
-                    fontWeight: AppFontWeight.semiBold,
+              delegate: SliverChildListDelegate(
+                [
+                  const SizedBox(height: AppSpacing.spacingL),
+                  // Shop Details Section
+                  BlocBuilder<ShopBloc, ShopState>(
+                    builder: (context, shopState) {
+                      if (shopState is ShopLoading) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (shopState is ShopLoaded) {
+                        final shop = shopState.shops.firstWhere(
+                          (shop) => shop.id == widget.id,
+                        );
+
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              shop.name,
+                              style: const TextStyle(
+                                fontSize: AppFontSize.fontSizeL,
+                                fontWeight: AppFontWeight.semiBold,
+                              ),
+                            ),
+                            const SizedBox(height: AppSpacing.spacingM),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(
+                                      AppBorderRadius.radiusXS),
+                                  child: Image.network(
+                                    shop.image?.path ??
+                                        '', // Ensure safe null handling here too
+                                    width: 150,
+                                    height: 150,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                const SizedBox(width: AppSpacing.spacingM),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        'Location',
+                                        style: TextStyle(
+                                          color: AppColors.textMutedColor,
+                                          fontWeight: AppFontWeight.semiBold,
+                                        ),
+                                      ),
+                                      Text(
+                                        shop.address,
+                                        style: const TextStyle(
+                                          fontWeight: AppFontWeight.semiBold,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                          height: AppSpacing.spacingS),
+                                      const Text(
+                                        'Operational Hours',
+                                        style: TextStyle(
+                                          color: AppColors.textMutedColor,
+                                          fontWeight: AppFontWeight.semiBold,
+                                        ),
+                                      ),
+                                      Text(
+                                        shop.operational,
+                                        style: const TextStyle(
+                                          fontWeight: AppFontWeight.semiBold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        );
+                      } else if (shopState is ShopError) {
+                        return Center(child: Text(shopState.message));
+                      }
+                      return const Center(child: Text('Something went wrong.'));
+                    },
                   ),
-                ),
-                const SizedBox(height: AppSpacing.spacingM),
-                // Store Image and Details
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Store Image
-                    ClipRRect(
-                      borderRadius:
-                          BorderRadius.circular(AppBorderRadius.radiusXS),
-                      child: Image.network(
-                        'https://placeholder.com/150x150', // Replace with actual image
-                        width: 150,
-                        height: 150,
-                        fit: BoxFit.cover,
-                      ),
+
+                  const SizedBox(height: AppSpacing.spacingM),
+                  // Shop Products Section
+                  const Text(
+                    'Shop Products',
+                    style: TextStyle(
+                      fontSize: AppFontSize.fontSizeM,
+                      fontWeight: AppFontWeight.semiBold,
                     ),
-                    const SizedBox(width: AppSpacing.spacingM),
-                    // Store Details
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            'Lokasi',
-                            style: TextStyle(
-                              color: AppColors.textMutedColor,
-                              fontWeight: AppFontWeight.semiBold,
-                            ),
-                          ),
-                          Text(
-                            'Kota Malang',
-                            style: TextStyle(
-                              fontWeight: AppFontWeight.semiBold,
-                            ),
-                          ),
-                          SizedBox(
-                            height: AppSpacing.spacingS,
-                          ),
-                          Text(
-                            'Jam Operasional',
-                            style: TextStyle(
-                              color: AppColors.textMutedColor,
-                              fontWeight: AppFontWeight.semiBold,
-                            ),
-                          ),
-                          Text(
-                            '08.00 - 17.00 WIB',
-                            style: TextStyle(
-                              fontWeight: AppFontWeight.semiBold,
-                            ),
-                          ),
-                          SizedBox(height: AppSpacing.spacingS),
-                          Text(
-                            'Tanggal Bergabung',
-                            style: TextStyle(
-                              color: AppColors.textMutedColor,
-                              fontWeight: AppFontWeight.semiBold,
-                            ),
-                          ),
-                          Text(
-                            '1 Januari 2024',
-                            style: TextStyle(
-                              fontWeight: AppFontWeight.semiBold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppSpacing.spacingM),
-                // Store Description
-                const Text(
-                  'Deskripsi Toko',
-                  style: TextStyle(
-                    fontSize: AppFontSize.fontSizeM,
-                    fontWeight: AppFontWeight.semiBold,
                   ),
-                ),
-                const SizedBox(height: AppSpacing.spacingXS),
-                const Text(
-                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-                ),
-                const SizedBox(height: AppSpacing.spacingM),
-                const Text(
-                  'Location',
-                  style: TextStyle(
-                    fontSize: AppFontSize.fontSizeM,
-                    fontWeight: AppFontWeight.semiBold,
+                  const SizedBox(height: AppSpacing.spacingXS),
+                  BlocBuilder<ProductBloc, ProductState>(
+                    builder: (context, productState) {
+                      if (productState is ProductLoading) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (productState is ProductLoaded) {
+                        if (productState.products.isEmpty) {
+                          return const Center(
+                              child: Text('No products found.'));
+                        }
+                        return GridView.builder(
+                          padding: const EdgeInsets.only(
+                              bottom: AppSpacing.spacingXXL),
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: AppSpacing.spacingM,
+                            mainAxisSpacing: AppSpacing.spacingM,
+                            childAspectRatio: 0.75,
+                          ),
+                          itemCount: productState.products.length,
+                          itemBuilder: (context, index) {
+                            final product = productState.products[index];
+                            return DetailedProductCard(product: product);
+                          },
+                        );
+                      } else if (productState is ProductError) {
+                        return Center(child: Text(productState.message));
+                      }
+                      return const Center(child: Text('Something went wrong.'));
+                    },
                   ),
-                ),
-                const SizedBox(height: AppSpacing.spacingXS),
-                // Google Maps
-                Container(
-                  height: 200,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Center(
-                    child: Text('Google Maps will be integrated here'),
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.spacingM),
-                // Store Products
-                const Text(
-                  'Produk Toko',
-                  style: TextStyle(
-                    fontSize: AppFontSize.fontSizeM,
-                    fontWeight: AppFontWeight.semiBold,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.spacingXS),
-                // Add your product grid or list here
-                GridView.builder(
-                  padding: const EdgeInsets.only(bottom: AppSpacing.spacingXXL),
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: AppSpacing.spacingM,
-                    mainAxisSpacing: AppSpacing.spacingM,
-                    childAspectRatio: 0.75,
-                  ),
-                  itemCount: 4, // Example count
-                  itemBuilder: (context, index) {
-                    return Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Center(
-                        child: Text('Product Item'),
-                      ),
-                    );
-                  },
-                ),
-              ]),
+                ],
+              ),
             ),
           ),
         ],
