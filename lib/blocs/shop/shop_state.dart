@@ -13,12 +13,12 @@ class ShopInitial extends ShopState {}
 class ShopLoading extends ShopState {}
 
 class ShopLoaded extends ShopState {
-  final List<Shop> shops;
+  final Shop shop;
 
-  const ShopLoaded(this.shops);
+  const ShopLoaded(this.shop);
 
   @override
-  List<Object> get props => [shops];
+  List<Object> get props => [shop];
 }
 
 class ShopError extends ShopState {

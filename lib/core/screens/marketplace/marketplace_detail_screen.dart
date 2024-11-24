@@ -1,21 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:leafolyze/blocs/shop/shop_bloc.dart';
-import 'package:leafolyze/blocs/shop/shop_state.dart';
 import 'package:leafolyze/blocs/shop/shop_event.dart';
-import 'package:leafolyze/blocs/product/product_bloc.dart';
-import 'package:leafolyze/blocs/product/product_state.dart';
-import 'package:leafolyze/blocs/product/product_event.dart';
-import 'package:leafolyze/core/widgets/marketplace/detailed_product_card.dart';
+import 'package:leafolyze/blocs/shop/shop_state.dart';
 import 'package:leafolyze/utils/constants.dart';
 
 class MarketplaceDetailScreen extends StatefulWidget {
-  final String id;
+  final int shopId;
 
-  const MarketplaceDetailScreen({
-    super.key,
-    required this.id,
-  });
+  const MarketplaceDetailScreen({super.key, required this.shopId});
 
   @override
   State<MarketplaceDetailScreen> createState() =>
@@ -26,173 +19,182 @@ class _MarketplaceDetailScreenState extends State<MarketplaceDetailScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<ShopBloc>().add(LoadShops());
-    context
-        .read<ProductBloc>()
-        .add(LoadProductsByShop(int.parse(widget.id)));
+    // Trigger the bloc to load the shop details
+    context.read<ShopBloc>().add(LoadShops(widget.shopId));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        shrinkWrap: true,
-        scrollBehavior: const ScrollBehavior().copyWith(
-          overscroll: false,
-        ),
-        slivers: [
-          const SliverAppBar(
-            centerTitle: true,
-            title: Text(
-              'Shop Profile',
-              style: TextStyle(
-                fontSize: AppFontSize.fontSizeXXL,
-                fontWeight: AppFontWeight.semiBold,
-              ),
-            ),
-            floating: true,
-            snap: true,
-            pinned: true,
-            backgroundColor: AppColors.backgroundColor,
-          ),
-          SliverPadding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: AppSpacing.spacingM),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate(
-                [
-                  const SizedBox(height: AppSpacing.spacingL),
-                  // Shop Details Section
-                  BlocBuilder<ShopBloc, ShopState>(
-                    builder: (context, shopState) {
-                      if (shopState is ShopLoading) {
-                        return const Center(child: CircularProgressIndicator());
-                      } else if (shopState is ShopLoaded) {
-                        final shop = shopState.shops.firstWhere(
-                          (shop) => shop.id == widget.id,
-                        );
+      body: BlocBuilder<ShopBloc, ShopState>(
+        builder: (context, state) {
+          if (state is ShopLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              shop.name,
-                              style: const TextStyle(
-                                fontSize: AppFontSize.fontSizeL,
-                                fontWeight: AppFontWeight.semiBold,
-                              ),
+          if (state is ShopError) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.error, color: Colors.red, size: 64),
+                  const SizedBox(height: 16),
+                  Text(state.message, textAlign: TextAlign.center),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () =>
+                        context.read<ShopBloc>().add(LoadShops(widget.shopId)),
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          if (state is ShopLoaded) {
+            final shop = state.shop;
+
+            return CustomScrollView(
+              slivers: [
+                SliverAppBar(
+                  centerTitle: true,
+                  title: Text(
+                    shop.name,
+                    style: const TextStyle(
+                      fontSize: AppFontSize.fontSizeXXL,
+                      fontWeight: AppFontWeight.semiBold,
+                    ),
+                  ),
+                  floating: true,
+                  snap: true,
+                  pinned: true,
+                  backgroundColor: AppColors.backgroundColor,
+                ),
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.spacingM,
+                  ),
+                  sliver: SliverList(
+                    delegate: SliverChildListDelegate([
+                      const SizedBox(height: AppSpacing.spacingL),
+                      // Store Name
+                      Text(
+                        shop.name,
+                        style: const TextStyle(
+                          fontSize: AppFontSize.fontSizeL,
+                          fontWeight: AppFontWeight.semiBold,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.spacingM),
+                      // Store Image and Details
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Store Image
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(
+                                AppBorderRadius.radiusXS),
+                            child: Image.network(
+                              shop.image as String? ?? 'https://lh3.googleusercontent.com/p/AF1QipMd6Q5zYhf4MX9GCK3nEblqaBHmCIpQSH446pwh=s1360-w1360-h1020',
+                              width: 150,
+                              height: 150,
+                              fit: BoxFit.cover,
                             ),
-                            const SizedBox(height: AppSpacing.spacingM),
-                            Row(
+                          ),
+                          const SizedBox(width: AppSpacing.spacingM),
+                          // Store Details
+                          Expanded(
+                            child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(
-                                      AppBorderRadius.radiusXS),
-                                  child: Image.network(
-                                    shop.image?.path ??
-                                        '', // Ensure safe null handling here too
-                                    width: 150,
-                                    height: 150,
-                                    fit: BoxFit.cover,
+                                const Text(
+                                  'Lokasi',
+                                  style: TextStyle(
+                                    color: AppColors.textMutedColor,
+                                    fontWeight: AppFontWeight.semiBold,
                                   ),
                                 ),
-                                const SizedBox(width: AppSpacing.spacingM),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        'Location',
-                                        style: TextStyle(
-                                          color: AppColors.textMutedColor,
-                                          fontWeight: AppFontWeight.semiBold,
-                                        ),
-                                      ),
-                                      Text(
-                                        shop.address,
-                                        style: const TextStyle(
-                                          fontWeight: AppFontWeight.semiBold,
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                          height: AppSpacing.spacingS),
-                                      const Text(
-                                        'Operational Hours',
-                                        style: TextStyle(
-                                          color: AppColors.textMutedColor,
-                                          fontWeight: AppFontWeight.semiBold,
-                                        ),
-                                      ),
-                                      Text(
-                                        shop.operational,
-                                        style: const TextStyle(
-                                          fontWeight: AppFontWeight.semiBold,
-                                        ),
-                                      ),
-                                    ],
+                                Text(
+                                  shop.address,
+                                  style: const TextStyle(
+                                    fontWeight: AppFontWeight.semiBold,
+                                  ),
+                                ),
+                                const SizedBox(height: AppSpacing.spacingS),
+                                const Text(
+                                  'Jam Operasional',
+                                  style: TextStyle(
+                                    color: AppColors.textMutedColor,
+                                    fontWeight: AppFontWeight.semiBold,
+                                  ),
+                                ),
+                                Text(
+                                  shop.operational,
+                                  style: const TextStyle(
+                                    fontWeight: AppFontWeight.semiBold,
+                                  ),
+                                ),
+                                const SizedBox(height: AppSpacing.spacingS),
+                                const Text(
+                                  'Tanggal Bergabung',
+                                  style: TextStyle(
+                                    color: AppColors.textMutedColor,
+                                    fontWeight: AppFontWeight.semiBold,
+                                  ),
+                                ),
+                                Text(
+                                  shop.createdAt != null
+                                      ? '${shop.createdAt!.day}/${shop.createdAt!.month}/${shop.createdAt!.year}'
+                                      : 'Unknown',
+                                  style: const TextStyle(
+                                    fontWeight: AppFontWeight.semiBold,
                                   ),
                                 ),
                               ],
                             ),
-                          ],
-                        );
-                      } else if (shopState is ShopError) {
-                        return Center(child: Text(shopState.message));
-                      }
-                      return const Center(child: Text('Something went wrong.'));
-                    },
-                  ),
-
-                  const SizedBox(height: AppSpacing.spacingM),
-                  // Shop Products Section
-                  const Text(
-                    'Shop Products',
-                    style: TextStyle(
-                      fontSize: AppFontSize.fontSizeM,
-                      fontWeight: AppFontWeight.semiBold,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.spacingXS),
-                  BlocBuilder<ProductBloc, ProductState>(
-                    builder: (context, productState) {
-                      if (productState is ProductLoading) {
-                        return const Center(child: CircularProgressIndicator());
-                      } else if (productState is ProductLoaded) {
-                        if (productState.products.isEmpty) {
-                          return const Center(
-                              child: Text('No products found.'));
-                        }
-                        return GridView.builder(
-                          padding: const EdgeInsets.only(
-                              bottom: AppSpacing.spacingXXL),
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: AppSpacing.spacingM,
-                            mainAxisSpacing: AppSpacing.spacingM,
-                            childAspectRatio: 0.75,
                           ),
-                          itemCount: productState.products.length,
-                          itemBuilder: (context, index) {
-                            final product = productState.products[index];
-                            return DetailedProductCard(product: product);
-                          },
-                        );
-                      } else if (productState is ProductError) {
-                        return Center(child: Text(productState.message));
-                      }
-                      return const Center(child: Text('Something went wrong.'));
-                    },
+                        ],
+                      ),
+                      const SizedBox(height: AppSpacing.spacingM),
+                      // Store Description
+                      const Text(
+                        'Deskripsi Toko',
+                        style: TextStyle(
+                          fontSize: AppFontSize.fontSizeM,
+                          fontWeight: AppFontWeight.semiBold,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.spacingXS),
+                      Text(shop.description),
+                      const SizedBox(height: AppSpacing.spacingM),
+                      const Text(
+                        'Location',
+                        style: TextStyle(
+                          fontSize: AppFontSize.fontSizeM,
+                          fontWeight: AppFontWeight.semiBold,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.spacingXS),
+                      // Google Maps
+                      Container(
+                        height: 200,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Center(
+                          child: Text('Google Maps will be integrated here'),
+                        ),
+                      ),
+                    ]),
                   ),
-                ],
-              ),
-            ),
-          ),
-        ],
+                ),
+              ],
+            );
+          }
+
+          return const Center(child: Text('Something went wrong'));
+        },
       ),
     );
   }

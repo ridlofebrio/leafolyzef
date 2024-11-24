@@ -94,14 +94,15 @@ class MainApp extends StatelessWidget {
               context.read<DetectionRepository>(),
             )..add(LoadDetections()),
           ),
-             BlocProvider(
+          BlocProvider(
             create: (context) => ProductBloc(
               ProductRepository(apiService, storageService),
             )..add(LoadProducts()),
           ),
-            BlocProvider(
-          create: (context) => ShopBloc(ShopRepository(apiService, storageService)),
-        ),
+          BlocProvider(
+            create: (context) =>
+                ShopBloc(ShopRepository(apiService, storageService)),
+          ),
         ],
         child: MaterialApp.router(
           debugShowCheckedModeBanner: false,
