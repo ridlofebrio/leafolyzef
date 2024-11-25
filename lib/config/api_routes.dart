@@ -5,6 +5,7 @@ class ApiRoutes {
   static const String _products = 'products';
   static const String _detections = 'detections';
   static const String _profile = 'profile';
+  static const String _shop = 'shop';
 
   // Auth routes
   static const auth = _AuthRoutes();
@@ -12,6 +13,7 @@ class ApiRoutes {
   static const products = _ProductRoutes();
   static const detections = _DetectionRoutes();
   static const profile = _ProfileRoutes();
+  static const shop = _ShopRoutes();
 }
 
 class _AuthRoutes {
@@ -58,4 +60,10 @@ class _ProfileRoutes {
   String get show => ApiRoutes._profile;
   String get update => '${ApiRoutes._profile}/update';
   String get updatePassword => '${ApiRoutes._profile}/password';
+}
+
+class _ShopRoutes {
+  const _ShopRoutes();
+  String get list => ApiRoutes._shop;
+  String show(int id) => '${ApiRoutes._shop}/$id';
 }
