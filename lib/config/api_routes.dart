@@ -4,6 +4,7 @@ class ApiRoutes {
   static const String _articles = 'articles';
   static const String _products = 'products';
   static const String _detections = 'detections';
+  static const String _diseases = 'diseases';
   static const String _profile = 'profile';
   static const String _shop = 'shop';
 
@@ -12,6 +13,7 @@ class ApiRoutes {
   static const articles = _ArticleRoutes();
   static const products = _ProductRoutes();
   static const detections = _DetectionRoutes();
+  static const diseases = _DiseaseRoutes();
   static const profile = _ProfileRoutes();
   static const shop = _ShopRoutes();
 }
@@ -52,6 +54,13 @@ class _DetectionRoutes {
   String create() => '${ApiRoutes._detections}/create';
   String update(int id) => '${ApiRoutes._detections}/$id';
   String delete(int id) => '${ApiRoutes._detections}/$id';
+}
+
+class _DiseaseRoutes {
+  const _DiseaseRoutes();
+
+  String get list => ApiRoutes._diseases;
+  String show(int id) => '${ApiRoutes._diseases}/$id';
 }
 
 class _ProfileRoutes {
