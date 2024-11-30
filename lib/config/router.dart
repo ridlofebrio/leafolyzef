@@ -86,11 +86,11 @@ final goRouter = GoRouter(
               ),
               routes: [
                 GoRoute(
-                  path: 'detail',
+                  path: 'detail/:shopId',
                   parentNavigatorKey: _rootNavigatorKey,
                   builder: (context, state) {
                     final shopId =
-                        int.tryParse(state.pathParameters['id'] ?? '1') ?? 1;
+                        int.tryParse(state.pathParameters['shopId']!) ?? 0;
                     return MarketplaceDetailScreen(shopId: shopId);
                   },
                 ),

@@ -188,7 +188,9 @@ class ResultScreen extends StatelessWidget {
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
-                          return SaveDialogWidget();
+                          return SaveDialogWidget(
+                            onSave: (String name) {},
+                          );
                         },
                       );
                     },

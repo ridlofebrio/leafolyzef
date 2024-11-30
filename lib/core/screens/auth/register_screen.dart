@@ -35,6 +35,8 @@ class RegisterScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.read<AuthBloc>().add(AuthCheckRequested());
+    
     return Scaffold(
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
@@ -111,7 +113,7 @@ class RegisterScreen extends StatelessWidget {
                                   birth: '2000-01-01', // Replace with actual birth data
                                   gender: 'Other', // Replace with actual gender data
                                   address: 'Unknown', // Replace with actual address
-                                  access: 'User', // Replace with actual access level
+                                  access: 'petani', // Replace with actual access level
                                 ),
                               );
                         },
