@@ -51,7 +51,7 @@ class _DetectionRoutes {
   String get list => ApiRoutes._detections;
   String show(int id) => '${ApiRoutes._detections}/$id';
   String get store => ApiRoutes._detections;
-  String create() => '${ApiRoutes._detections}/create';
+  String create() => ApiRoutes._detections;
   String update(int id) => '${ApiRoutes._detections}/$id';
   String delete(int id) => '${ApiRoutes._detections}/$id';
 }

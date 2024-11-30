@@ -189,6 +189,8 @@ class ResultScreen extends StatelessWidget {
                         context: context,
                         builder: (BuildContext context) {
                           return SaveDialogWidget(
+                            imagePath: imageUrl,
+                            diseaseIds: [1],
                             onSave: (String name) {},
                           );
                         },

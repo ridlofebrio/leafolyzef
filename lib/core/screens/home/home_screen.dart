@@ -446,7 +446,7 @@ Widget _buildContent(HistoryState state) {
         return DiagnosisItem(
           imagePath: detection.image?.path ?? '',
           plantName: detection.title,
-          diseaseName: detection.diseases?[0].name ?? '',
+          diseaseName: detection.diseases?.firstOrNull?.name ?? '',
           onTap: () {
             context.push('/history/detection/${detection.id}');
           },

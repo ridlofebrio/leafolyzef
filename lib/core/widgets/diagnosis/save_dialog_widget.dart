@@ -2,10 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:leafolyze/utils/constants.dart';
 
 class SaveDialogWidget extends StatelessWidget {
-  final TextEditingController _controller = TextEditingController();
+  final String imagePath;
+  final List<int> diseaseIds;
   final Function(String) onSave;
+  final TextEditingController _controller = TextEditingController();
 
-  SaveDialogWidget({super.key, required this.onSave});
+  SaveDialogWidget({
+    super.key,
+    required this.imagePath,
+    required this.diseaseIds,
+    required this.onSave,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -68,19 +75,11 @@ class SaveDialogWidget extends StatelessWidget {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                final title = _controller.text.trim();
-
-                if (title.isEmpty) {
-                  // Show error if title is empty
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Please enter a name for your scan'),
-                    ),
-                  );
-                  return;
+                final title = _controller.text;
+                if (title.isNotEmpty) {
+                  onSave(title);
+                  Navigator.of(context).pop();
                 }
-                onSave(title); // Call the onSave callback
-                Navigator.of(context).pop(); // Close the dialog
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primaryColor,

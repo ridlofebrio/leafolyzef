@@ -8,3 +8,5 @@ abstract class HistoryEvent extends Equatable {
 }
 
 class LoadDetections extends HistoryEvent {}
+
+class RefreshDetections extends HistoryEvent {}
