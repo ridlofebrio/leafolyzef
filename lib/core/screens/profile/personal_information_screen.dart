@@ -7,6 +7,8 @@ import 'package:leafolyze/blocs/profile/profile_event.dart';
 import 'package:leafolyze/blocs/profile/profile_state.dart';
 
 class PersonalInformationScreen extends StatefulWidget {
+  const PersonalInformationScreen({super.key});
+
   @override
   _PersonalInformationScreenState createState() =>
       _PersonalInformationScreenState();

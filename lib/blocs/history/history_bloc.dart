@@ -8,6 +8,7 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
 
   HistoryBloc(this._repository) : super(HistoryInitial()) {
     on<LoadDetections>(_onLoadDetections);
+    on<RefreshDetections>(_onRefreshDetections);
   }
 
   Future<void> _onLoadDetections(
@@ -15,6 +16,18 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
     Emitter<HistoryState> emit,
   ) async {
     emit(HistoryLoading());
+    try {
+      final detections = await _repository.getAllDetections();
+      emit(HistoryLoaded(detections));
+    } catch (e) {
+      emit(HistoryError(e.toString()));
+    }
+  }
+
+  Future<void> _onRefreshDetections(
+    RefreshDetections event,
+    Emitter<HistoryState> emit,
+  ) async {
     try {
       final detections = await _repository.getAllDetections();
       emit(HistoryLoaded(detections));

@@ -5,6 +5,7 @@ import 'package:leafolyze/blocs/article/article_bloc.dart';
 import 'package:leafolyze/blocs/article/article_event.dart';
 import 'package:leafolyze/blocs/auth/auth_bloc.dart';
 import 'package:leafolyze/blocs/auth/auth_event.dart';
+import 'package:leafolyze/blocs/detection/detection_bloc.dart';
 import 'package:leafolyze/blocs/history/history_bloc.dart';
 import 'package:leafolyze/blocs/history/history_event.dart';
 import 'package:leafolyze/blocs/product/product_bloc.dart';
@@ -102,6 +103,11 @@ class MainApp extends StatelessWidget {
           BlocProvider(
             create: (context) =>
                 ShopBloc(ShopRepository(apiService, storageService)),
+          ),
+          BlocProvider(
+            create: (context) => DetectionBloc(
+              context.read<DetectionRepository>(),
+            ),
           ),
         ],
         child: MaterialApp.router(

@@ -2,7 +2,12 @@ import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:leafolyze/blocs/detection/detection_bloc.dart';
+import 'package:leafolyze/blocs/detection/detection_event.dart';
+import 'package:leafolyze/blocs/detection/detection_state.dart';
+import 'package:leafolyze/core/widgets/diagnosis/save_dialog_widget.dart';
 import 'package:leafolyze/services/object_detector.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:image_picker/image_picker.dart';
@@ -130,31 +135,27 @@ class _CameraScreenState extends State<CameraScreen> {
 
       if (!mounted) return;
 
-      await showDialog(
+      final detection = detections[0]; // ambil deteksi pertama
+      final disease = detection['class'] as String;
+      final diseaseId = _mapDiseaseToId(disease);
+
+      showDialog(
         context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Disease Detected'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('Detected diseases:'),
-              const SizedBox(height: 8),
-              ...detections.map((detection) {
-                final disease = detection['class'] as String;
-                final confidence = (detection['confidence'] as double) * 100;
-                return Text('• $disease (${confidence.toStringAsFixed(1)}%)');
-              }),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('OK'),
-            ),
-          ],
+        builder: (context) => SaveDialogWidget(
+          imagePath: image.path,
+          diseaseIds: [diseaseId],
+          onSave: (String title) {
+            context.read<DetectionBloc>().add(
+              SaveDetection(
+                title: title,
+                imagePath: image.path,
+                diseaseIds: [diseaseId],
+              ),
+            );
+          },
         ),
       );
+
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -215,69 +216,83 @@ class _CameraScreenState extends State<CameraScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          !_isCameraInitialized
-              ? Center(child: CircularProgressIndicator())
-              : CameraPreview(_controller!),
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              color: Colors.white,
-              padding: EdgeInsets.fromLTRB(16, 48, 16, 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.arrow_back, color: Colors.black),
-                    onPressed: () => context.go('/home'),
-                  ),
-                  IconButton(
-                    icon: Icon(_isFlashOn ? Icons.flash_on : Icons.flash_off,
-                        color: Colors.black),
-                    onPressed: _toggleFlash,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 40.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.photo_library,
-                        color: Colors.black, size: 32),
-                    onPressed: _pickImageFromGallery,
-                  ),
-                  GestureDetector(
-                    onTap: _takePicture,
-                    child: Container(
-                      width: 70,
-                      height: 70,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(Icons.camera, color: Colors.black, size: 40),
+    return BlocListener<DetectionBloc, DetectionState>(
+      listener: (context, state) {
+        if (state is DetectionSuccess) {
+          context.go('/history');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Berhasil menyimpan hasil deteksi')),
+          );
+        } else if (state is DetectionError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message)),
+          );
+        }
+      },
+      child: Scaffold(
+        body: Stack(
+          children: [
+            !_isCameraInitialized
+                ? Center(child: CircularProgressIndicator())
+                : CameraPreview(_controller!),
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                color: Colors.white,
+                padding: EdgeInsets.fromLTRB(16, 48, 16, 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.arrow_back, color: Colors.black),
+                      onPressed: () => context.go('/home'),
                     ),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.flip_camera_android,
-                        color: Colors.black, size: 32),
-                    onPressed: _flipCamera,
-                  ),
-                ],
+                    IconButton(
+                      icon: Icon(_isFlashOn ? Icons.flash_on : Icons.flash_off,
+                          color: Colors.black),
+                      onPressed: _toggleFlash,
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 40.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.photo_library,
+                          color: Colors.black, size: 32),
+                      onPressed: _pickImageFromGallery,
+                    ),
+                    GestureDetector(
+                      onTap: _takePicture,
+                      child: Container(
+                        width: 70,
+                        height: 70,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(Icons.camera, color: Colors.black, size: 40),
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.flip_camera_android,
+                          color: Colors.black, size: 32),
+                      onPressed: _flipCamera,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

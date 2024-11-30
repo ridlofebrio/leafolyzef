@@ -66,8 +66,7 @@ class DetectionRepository {
   }) async {
     try {
       final token = await _storageService.getToken();
-
-      // Create form data for multipart request
+      
       final formData = FormData.fromMap({
         'title': title,
         'image': await MultipartFile.fromFile(imagePath),
@@ -91,7 +90,7 @@ class DetectionRepository {
 
       return apiResponse.data!;
     } catch (e) {
-      throw Exception('Failed to create detection: $e');
+      throw Exception('Gagal membuat deteksi: $e');
     }
   }
 
@@ -108,7 +107,7 @@ class DetectionRepository {
       final formData = FormData.fromMap({
         if (title != null) 'title': title,
         if (imagePath != null) 'image': await MultipartFile.fromFile(imagePath),
-        if (diseaseIds != null) 'disease_ids[]': diseaseIds,
+        if (diseaseIds != null) 'disease_ids': diseaseIds,
       });
 
       final response = await _apiService.post(

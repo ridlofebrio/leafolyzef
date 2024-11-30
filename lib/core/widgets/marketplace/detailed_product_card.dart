@@ -15,7 +15,8 @@ class DetailedProductCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       borderRadius: BorderRadius.circular(AppBorderRadius.radiusXS),
-      onTap: () => context.go('/marketplace/product/detail'),
+      onTap: () =>
+          context.go('/marketplace/${product.id}/detail/${product.shopId}'),
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.backgroundColor,
