@@ -172,7 +172,7 @@ class _ResultScreenState extends State<ResultScreen> {
                         return const SizedBox();
                       },
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: AppSpacing.spacingM),
                   ],
                 ),
               ),
