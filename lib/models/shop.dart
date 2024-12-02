@@ -9,6 +9,7 @@ class Shop extends Equatable {
   final String description;
   final String operational;
   final Image? image;
+  final String noHp;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -19,6 +20,7 @@ class Shop extends Equatable {
     required this.address,
     required this.description,
     required this.operational,
+    required this.noHp,
     this.image,
     this.createdAt,
     this.updatedAt,
@@ -27,6 +29,7 @@ class Shop extends Equatable {
   factory Shop.fromJson(Map<String, dynamic> json) {
     return Shop(
       id: json['id'],
+      noHp: json['noHp'],
       userId: json['user_id'],
       name: json['name'],
       address: json['address'],
@@ -47,6 +50,7 @@ class Shop extends Equatable {
       'id': id,
       'user_id': userId,
       'name': name,
+      'no_hp': noHp,
       'address': address,
       'description': description,
       'operational': operational,
@@ -63,6 +67,7 @@ class Shop extends Equatable {
     String? address,
     String? description,
     String? operational,
+    String? noHp,
     Image? image,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -71,6 +76,7 @@ class Shop extends Equatable {
       id: id ?? this.id,
       userId: userId ?? this.userId,
       name: name ?? this.name,
+      noHp: noHp ?? this.noHp,
       address: address ?? this.address,
       description: description ?? this.description,
       operational: operational ?? this.operational,
@@ -86,6 +92,7 @@ class Shop extends Equatable {
         userId,
         name,
         address,
+        noHp,
         description,
         operational,
         image,
