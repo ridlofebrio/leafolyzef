@@ -26,6 +26,7 @@ class _CameraScreenState extends State<CameraScreen> {
   bool _isCameraInitialized = false;
   int _selectedCameraIndex = 0;
   bool _isFlashOn = false;
+  bool _isProcessing = false;
 
   @override
   void initState() {
@@ -111,17 +112,24 @@ class _CameraScreenState extends State<CameraScreen> {
   }
 
   Future<void> _processImage(XFile image) async {
+    setState(() {
+      _isProcessing = true;
+    });
+
     try {
       final detections = await _objectDetector.detectFromImage(image);
 
       if (detections.isEmpty) {
         if (!mounted) return;
+        setState(() {
+          _isProcessing = false;
+        });
         await showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('No Disease Detected'),
+            title: const Text('Tidak Ada Penyakit Terdeteksi'),
             content: const Text(
-                'No plant diseases were detected in this image. Please try again with a clearer image.'),
+                'Tidak ada penyakit tanaman yang terdeteksi dalam gambar ini. Silakan coba lagi dengan gambar yang lebih jelas.'),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
@@ -135,7 +143,7 @@ class _CameraScreenState extends State<CameraScreen> {
 
       if (!mounted) return;
 
-      final detection = detections[0]; // ambil deteksi pertama
+      final detection = detections[0];
       final disease = detection['class'] as String;
       final diseaseId = _mapDiseaseToId(disease);
 
@@ -146,21 +154,23 @@ class _CameraScreenState extends State<CameraScreen> {
           diseaseIds: [diseaseId],
           onSave: (String title) {
             context.read<DetectionBloc>().add(
-              SaveDetection(
-                title: title,
-                imagePath: image.path,
-                diseaseIds: [diseaseId],
-              ),
-            );
+                  SaveDetection(
+                    title: title,
+                    imagePath: image.path,
+                    diseaseIds: [diseaseId],
+                  ),
+                );
           },
         ),
       );
-
     } catch (e) {
       if (!mounted) return;
+      setState(() {
+        _isProcessing = false;
+      });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error processing image: ${e.toString()}'),
+          content: Text('Error memproses gambar: ${e.toString()}'),
           duration: const Duration(seconds: 3),
         ),
       );
@@ -219,80 +229,111 @@ class _CameraScreenState extends State<CameraScreen> {
     return BlocListener<DetectionBloc, DetectionState>(
       listener: (context, state) {
         if (state is DetectionSuccess) {
+          setState(() {
+            _isProcessing = false;
+          });
           context.go('/history');
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Berhasil menyimpan hasil deteksi')),
-          );
         } else if (state is DetectionError) {
+          setState(() {
+            _isProcessing = false;
+          });
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.message)),
           );
         }
       },
-      child: Scaffold(
-        body: Stack(
-          children: [
-            !_isCameraInitialized
-                ? Center(child: CircularProgressIndicator())
-                : CameraPreview(_controller!),
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                color: Colors.white,
-                padding: EdgeInsets.fromLTRB(16, 48, 16, 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.arrow_back, color: Colors.black),
-                      onPressed: () => context.go('/home'),
-                    ),
-                    IconButton(
-                      icon: Icon(_isFlashOn ? Icons.flash_on : Icons.flash_off,
-                          color: Colors.black),
-                      onPressed: _toggleFlash,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 40.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.photo_library,
-                          color: Colors.black, size: 32),
-                      onPressed: _pickImageFromGallery,
-                    ),
-                    GestureDetector(
-                      onTap: _takePicture,
-                      child: Container(
-                        width: 70,
-                        height: 70,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
+      child: Stack(
+        children: [
+          Scaffold(
+            body: Stack(
+              children: [
+                !_isCameraInitialized
+                    ? const Center(child: CircularProgressIndicator())
+                    : CameraPreview(_controller!),
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    color: Colors.white,
+                    padding: EdgeInsets.fromLTRB(16, 48, 16, 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.arrow_back, color: Colors.black),
+                          onPressed: () => context.go('/home'),
                         ),
-                        child: Icon(Icons.camera, color: Colors.black, size: 40),
+                        IconButton(
+                          icon: Icon(
+                              _isFlashOn ? Icons.flash_on : Icons.flash_off,
+                              color: Colors.black),
+                          onPressed: _toggleFlash,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 40.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.photo_library,
+                              color: Colors.black, size: 32),
+                          onPressed: _pickImageFromGallery,
+                        ),
+                        GestureDetector(
+                          onTap: _takePicture,
+                          child: Container(
+                            width: 70,
+                            height: 70,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(Icons.camera,
+                                color: Colors.black, size: 40),
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.flip_camera_android,
+                              color: Colors.black, size: 32),
+                          onPressed: _flipCamera,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (_isProcessing)
+            Container(
+              color: Colors.black54,
+              child: const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(
+                      color: Colors.white,
+                    ),
+                    SizedBox(height: 16),
+                    Text(
+                      'Memproses gambar...',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
                       ),
                     ),
-                    IconButton(
-                      icon: Icon(Icons.flip_camera_android,
-                          color: Colors.black, size: 32),
-                      onPressed: _flipCamera,
-                    ),
                   ],
                 ),
               ),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }
