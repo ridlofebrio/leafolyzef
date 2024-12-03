@@ -68,7 +68,7 @@ class DetailedProductCard extends StatelessWidget {
                     ),
                     const SizedBox(height: AppSpacing.spacingMS),
                     Text(
-                      product.name ?? 'Unnamed Product',
+                      product.name,
                       style: const TextStyle(
                         fontSize: AppFontSize.fontSizeMS,
                         fontWeight: AppFontWeight.semiBold,
@@ -78,7 +78,7 @@ class DetailedProductCard extends StatelessWidget {
                     ),
                     const SizedBox(height: AppSpacing.spacingXXS),
                     Text(
-                      'Rp. ${product.price ?? 'N/A'}',
+                      'Rp. ${product.price}',
                       style: const TextStyle(
                         color: AppColors.primaryColor,
                         fontWeight: AppFontWeight.bold,
