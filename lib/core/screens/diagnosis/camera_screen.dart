@@ -11,6 +11,7 @@ import 'package:leafolyze/core/widgets/diagnosis/save_dialog_widget.dart';
 import 'package:leafolyze/services/object_detector.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:leafolyze/core/screens/diagnosis/result_screen.dart';
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({super.key});
@@ -232,7 +233,21 @@ class _CameraScreenState extends State<CameraScreen> {
           setState(() {
             _isProcessing = false;
           });
-          context.go('/history');
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => ResultScreen(
+                title: state.detection.title,
+                diseaseId: state.detection.diseases?.firstOrNull?.id ?? 0,
+                imageUrl: state.detection.image?.path ?? '',
+                description: 'Deskripsi untuk ${state.detection.title}',
+                treatmentTitle: 'Pengobatan',
+                treatments: [],
+                pesticideTitle: 'Pestisida',
+                pesticides: [],
+                timestamp: DateTime.now().toString(),
+              ),
+            ),
+          );
         } else if (state is DetectionError) {
           setState(() {
             _isProcessing = false;
