@@ -56,6 +56,22 @@ class MarketplaceScreen extends StatefulWidget {
 }
 
 class _MarketplaceScreenState extends State<MarketplaceScreen> {
+  List<Map<String, dynamic>> filteredProducts = diseaseProducts;
+
+  void _filterProducts(String query) {
+    if (query.isEmpty) {
+      setState(() {
+        filteredProducts = diseaseProducts;
+      });
+    } else {
+      setState(() {
+        filteredProducts = diseaseProducts.where((product) {
+          return product['name'].toLowerCase().contains(query.toLowerCase());
+        }).toList();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,9 +102,12 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                 delegate: SliverChildListDelegate(
                   [
                     CustomSearchBar(
-                      // TODO: Implement search functionality
-                      onChanged: (value) {},
-                      onSubmitted: (value) {},
+                      onChanged: (value) {
+                        _filterProducts(value);
+                      },
+                      onSubmitted: (value) {
+                        _filterProducts(value);
+                      },
                     ),
                     SizedBox(height: AppSpacing.spacingM),
                     Text(
@@ -117,7 +136,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
               ),
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
-                  final diseaseProduct = diseaseProducts[index];
+                  final diseaseProduct = filteredProducts[index];
                   return ProductCard(
                     id: diseaseProduct['diseaseId'],
                     imageUrl: diseaseProduct['image'],
@@ -125,7 +144,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                     price: diseaseProduct['price'],
                   );
                 },
-                childCount: diseaseProducts.length,
+                childCount: filteredProducts.length,
               ),
             ),
           ),

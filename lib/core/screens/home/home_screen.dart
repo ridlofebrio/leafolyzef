@@ -16,6 +16,7 @@ import 'package:leafolyze/repositories/detection_repository.dart';
 import 'package:leafolyze/services/api_service.dart';
 import 'package:leafolyze/services/storage_service.dart';
 import 'package:leafolyze/utils/constants.dart';
+import 'package:leafolyze/core/screens/diagnosis/result_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -159,7 +160,6 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
   }
-
 }
 
 Widget _buildWateringReminder() {
@@ -376,7 +376,7 @@ Widget _buildRecentDiagnosis() {
           ],
         ),
         child: Column(
-          mainAxisSize: MainAxisSize.min, // Add this
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Padding(
@@ -386,7 +386,7 @@ Widget _buildRecentDiagnosis() {
                 children: [
                   Center(
                     child: Text(
-                      'Recent Diagnosis',
+                      'Diagnosis Terbaru',
                       style: TextStyle(
                         fontSize: AppFontSize.fontSizeMS,
                         fontWeight: AppFontWeight.semiBold,
@@ -399,7 +399,7 @@ Widget _buildRecentDiagnosis() {
                     },
                     child: Center(
                       child: Text(
-                        'See all',
+                        'Lihat Semua',
                         style: TextStyle(
                           fontSize: AppFontSize.fontSizeMS,
                           fontWeight: AppFontWeight.semiBold,
@@ -422,7 +422,7 @@ Widget _buildRecentDiagnosis() {
 Widget _buildContent(HistoryState state) {
   if (state is HistoryLoading) {
     return const SizedBox(
-      height: 200, // Match container's minHeight
+      height: 200,
       child: Center(
         child: CircularProgressIndicator(),
       ),
@@ -431,25 +431,49 @@ Widget _buildContent(HistoryState state) {
     if (state.detections.isEmpty) {
       return const Padding(
         padding: EdgeInsets.all(AppSpacing.spacingM),
-        child: Text('No recent diagnoses'),
+        child: Text('Belum ada riwayat diagnosis'),
       );
     }
+
+    // Ambil 3 diagnosis terbaru
+    final recentDetections = state.detections.take(3).toList();
+
     return ListView.separated(
       padding: EdgeInsets.zero,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: state.detections.take(3).length,
+      itemCount: recentDetections.length,
       separatorBuilder: (context, index) =>
           const SizedBox(height: AppSpacing.spacingS),
       itemBuilder: (context, index) {
-        final detection = state.detections[index];
-        return DiagnosisItem(
-          imagePath: detection.image?.path ?? '',
-          plantName: detection.title,
-          diseaseName: detection.diseases?.firstOrNull?.name ?? '',
+        final detection = recentDetections[index];
+        return GestureDetector(
           onTap: () {
-            context.push('/history/detection/${detection.id}');
+            // Navigasi ke ResultScreen dengan data yang diperlukan
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => ResultScreen(
+                  detectionId: detection.id ?? 0,
+                  title: detection.title,
+                  diseaseId: detection.diseases?.firstOrNull?.id ?? 0,
+                  imageUrl: detection.image?.path ?? '',
+                  description: 'Deskripsi untuk ${detection.title}',
+                  treatmentTitle: 'Pengobatan', // Ganti dengan data yang sesuai
+                  treatments: [], // Ganti dengan daftar pengobatan yang sesuai
+                  pesticideTitle: 'Pestisida', // Ganti dengan data yang sesuai
+                  pesticides: [], // Ganti dengan daftar pestisida yang sesuai
+                  timestamp: DateTime.now()
+                      .toString(), // Ganti dengan timestamp yang sesuai
+                ),
+              ),
+            );
           },
+          child: DiagnosisItem(
+            imagePath: detection.image?.path ?? '',
+            plantName: detection.title,
+            diseaseName: detection.diseases?.firstOrNull?.name ??
+                'Tidak ada penyakit terdeteksi',
+          ),
         );
       },
     );
@@ -462,6 +486,6 @@ Widget _buildContent(HistoryState state) {
     );
   }
   return const Center(
-    child: Text('Start scanning leaves to see your diagnoses'),
+    child: Text('Mulai scan daun untuk melihat diagnosis'),
   );
 }

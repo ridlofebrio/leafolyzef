@@ -13,7 +13,7 @@ class DetectionInitial extends DetectionState {}
 class DetectionLoading extends DetectionState {}
 
 class DetectionSuccess extends DetectionState {
-  final TomatoLeafDetection detection;
+  final TomatoLeafDetection? detection;
 
   const DetectionSuccess(this.detection);
 
