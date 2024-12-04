@@ -102,13 +102,20 @@ class DetectionRepository {
   }) async {
     try {
       final token = await _storageService.getToken();
-
-      // Create form data for multipart request
+      
       final formData = FormData.fromMap({
         if (title != null) 'title': title,
-        if (imagePath != null) 'image': await MultipartFile.fromFile(imagePath),
         if (diseaseIds != null) 'disease_ids': diseaseIds,
       });
+
+      if (imagePath != null && !imagePath.startsWith('http')) {
+        formData.files.add(
+          MapEntry(
+            'image',
+            await MultipartFile.fromFile(imagePath),
+          ),
+        );
+      }
 
       final response = await _apiService.post(
         ApiRoutes.detections.update(id),
@@ -127,7 +134,7 @@ class DetectionRepository {
 
       return apiResponse.data!;
     } catch (e) {
-      throw Exception('Failed to update detection: $e');
+      throw Exception('Gagal mengupdate deteksi: $e');
     }
   }
 

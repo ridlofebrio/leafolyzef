@@ -12,12 +12,13 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentPath = GoRouterState.of(context).uri.path;
+    final hideNavigation =
+        currentPath.startsWith('/diagnose') || currentPath.contains('/result');
+
     return Scaffold(
       body: child,
-      bottomNavigationBar: !GoRouterState.of(context)
-              .uri
-              .path
-              .startsWith('/diagnose')
+      bottomNavigationBar: !hideNavigation
           ? NavigationBar(
               selectedIndex: _calculateSelectedIndex(context),
               onDestinationSelected: (index) => _onItemTapped(index, context),
@@ -43,18 +44,17 @@ class Home extends StatelessWidget {
               ],
             )
           : null,
-      floatingActionButton:
-          !GoRouterState.of(context).uri.path.startsWith('/diagnose')
-              ? FloatingActionButton(
-                  backgroundColor: AppColors.primaryColor,
-                  shape: const CircleBorder(),
-                  child: const Icon(
-                    Icons.camera_alt,
-                    color: Colors.white,
-                  ),
-                  onPressed: () => context.go('/diagnose'),
-                )
-              : null,
+      floatingActionButton: !hideNavigation
+          ? FloatingActionButton(
+              backgroundColor: AppColors.primaryColor,
+              shape: const CircleBorder(),
+              child: const Icon(
+                Icons.camera_alt,
+                color: Colors.white,
+              ),
+              onPressed: () => context.go('/diagnose'),
+            )
+          : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }

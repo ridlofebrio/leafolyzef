@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:leafolyze/blocs/detection/detection_event.dart';
 import 'package:leafolyze/blocs/product/product_bloc.dart';
 import 'package:leafolyze/blocs/product/product_event.dart';
 import 'package:leafolyze/blocs/product/product_state.dart';
@@ -6,6 +7,8 @@ import 'package:leafolyze/utils/constants.dart';
 import 'package:leafolyze/core/screens/diagnosis/deskripsi.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:leafolyze/models/product.dart';
+import 'package:leafolyze/blocs/detection/detection_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class ResultScreen extends StatefulWidget {
   final String title;
@@ -17,6 +20,7 @@ class ResultScreen extends StatefulWidget {
   final String pesticideTitle;
   final List<String> pesticides;
   final String timestamp;
+  final int detectionId;
 
   const ResultScreen({
     super.key,
@@ -29,6 +33,7 @@ class ResultScreen extends StatefulWidget {
     required this.pesticideTitle,
     required this.pesticides,
     required this.timestamp,
+    required this.detectionId,
   });
 
   @override
@@ -163,12 +168,13 @@ class _ResultScreenState extends State<ResultScreen> {
                     BlocBuilder<ProductBloc, ProductState>(
                       builder: (context, state) {
                         if (state is ProductLoading) {
-                          return const Center(child: CircularProgressIndicator());
+                          return const Center(
+                              child: CircularProgressIndicator());
                         }
                         if (state is ProductLoaded) {
                           return _buildPesticideList(state.products);
                         }
-                        
+
                         return const SizedBox();
                       },
                     ),
@@ -179,6 +185,67 @@ class _ResultScreenState extends State<ResultScreen> {
             ),
           ),
           // Bottom Button section with white background
+          Container(
+            color: Colors.white,
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
+                  child: _buildActionButton(
+                    "Re-generate",
+                    Colors.white,
+                    AppColors.primaryColor,
+                    _handleRegenerate,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: _buildActionButton(
+                    "Hapus",
+                    Colors.white,
+                    Colors.redAccent,
+                    () async {
+                      // Tampilkan dialog konfirmasi
+                      final shouldDelete = await showDialog<bool>(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Konfirmasi Hapus'),
+                          content: const Text(
+                            'Apakah Anda yakin ingin menghapus hasil diagnosis ini?'
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(false),
+                              child: const Text('Batal'),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(true),
+                              child: const Text(
+                                'Hapus',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+
+                      if (shouldDelete == true) {
+                        // Dispatch event untuk menghapus deteksi
+                        context.read<DetectionBloc>().add(Delete(widget.detectionId));
+                        
+                        // Kembali ke halaman sebelumnya
+                        if (context.mounted) {
+                          context.pop();
+                        }
+                      }
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -251,4 +318,45 @@ class _ResultScreenState extends State<ResultScreen> {
     );
   }
 
+  Widget _buildActionButton(String label, Color textColor,
+      Color backgroundColor, VoidCallback onPressed) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: backgroundColor,
+        foregroundColor: textColor,
+        padding: const EdgeInsets.symmetric(vertical: 16.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  void _handleRegenerate() async {
+    context.read<DetectionBloc>().add(
+      UpdateDetection(
+        id: widget.detectionId,
+        title: widget.title,
+        imagePath: widget.imageUrl,
+        diseaseIds: [widget.diseaseId],
+      ),
+    );
+    
+    context.push('/diagnose', extra: {
+      'imageUrl': widget.imageUrl,
+      'isRegenerate': true,
+      'detectionId': widget.detectionId,
+      'title': widget.title,
+      'diseaseId': widget.diseaseId,
+      'skipLabelInput': true,
+    });
+  }
 }

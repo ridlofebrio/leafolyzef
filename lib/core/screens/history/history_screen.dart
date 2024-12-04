@@ -70,6 +70,7 @@ class HistoryScreen extends StatelessWidget {
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => ResultScreen(
+                              detectionId: detection.id ?? 0,
                               title: detection.title,
                               diseaseId:
                                   detection.diseases?.firstOrNull?.id ?? 0,

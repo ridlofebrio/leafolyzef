@@ -38,3 +38,12 @@ class UpdateDetection extends DetectionEvent {
   @override
   List<Object?> get props => [id, title, imagePath, diseaseIds];
 }
+
+class Delete extends DetectionEvent {
+  final int id;
+
+  const Delete(this.id);
+
+  @override
+  List<Object?> get props => [id];
+}
