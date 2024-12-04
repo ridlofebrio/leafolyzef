@@ -14,7 +14,12 @@ import 'package:image_picker/image_picker.dart';
 import 'package:leafolyze/core/screens/diagnosis/result_screen.dart';
 
 class CameraScreen extends StatefulWidget {
-  const CameraScreen({super.key});
+  final Map<String, dynamic>? extra;
+
+  const CameraScreen({
+    super.key,
+    this.extra,
+  });
 
   @override
   State<CameraScreen> createState() => _CameraScreenState();
@@ -118,6 +123,55 @@ class _CameraScreenState extends State<CameraScreen> {
     });
 
     try {
+      if (widget.extra != null && widget.extra!['isRegenerate'] == true) {
+        if (!mounted) return;
+
+        final String newImagePath = image.path;
+        final detections = await _objectDetector.detectFromImage(image);
+
+        if (detections.isEmpty) {
+          if (!mounted) return;
+          setState(() {
+            _isProcessing = false;
+          });
+          await showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Tidak Ada Penyakit Terdeteksi'),
+              content: const Text(
+                  'Tidak ada penyakit tanaman yang terdeteksi dalam gambar ini. Silakan coba lagi dengan gambar yang lebih jelas.'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+          return;
+        }
+
+        showDialog(
+          context: context,
+          builder: (context) => SaveDialogWidget(
+            imagePath: newImagePath,
+            diseaseIds: [widget.extra!['diseaseId'] ?? 3],
+            initialTitle: widget.extra!['title'],
+            onSave: (String title) {
+              context.read<DetectionBloc>().add(
+                    UpdateDetection(
+                      id: widget.extra!['detectionId'],
+                      title: title,
+                      imagePath: newImagePath,
+                      diseaseIds: [widget.extra!['diseaseId'] ?? 3],
+                    ),
+                  );
+            },
+          ),
+        );
+        return;
+      }
+
       final detections = await _objectDetector.detectFromImage(image);
 
       if (detections.isEmpty) {
@@ -236,10 +290,11 @@ class _CameraScreenState extends State<CameraScreen> {
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => ResultScreen(
-                title: state.detection.title,
-                diseaseId: state.detection.diseases?.firstOrNull?.id ?? 0,
-                imageUrl: state.detection.image?.path ?? '',
-                description: 'Deskripsi untuk ${state.detection.title}',
+                detectionId: state.detection?.id ?? 0,
+                title: state.detection?.title ?? '',
+                diseaseId: state.detection?.diseases?.firstOrNull?.id ?? 0,
+                imageUrl: state.detection?.image?.path ?? '',
+                description: 'Deskripsi untuk ${state.detection?.title ?? ''}',
                 treatmentTitle: 'Pengobatan',
                 treatments: [],
                 pesticideTitle: 'Pestisida',

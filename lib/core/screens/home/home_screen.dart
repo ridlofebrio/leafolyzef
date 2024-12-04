@@ -453,6 +453,7 @@ Widget _buildContent(HistoryState state) {
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => ResultScreen(
+                  detectionId: detection.id ?? 0,
                   title: detection.title,
                   diseaseId: detection.diseases?.firstOrNull?.id ?? 0,
                   imageUrl: detection.image?.path ?? '',

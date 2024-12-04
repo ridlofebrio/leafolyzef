@@ -1,18 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:leafolyze/utils/constants.dart';
 
-class SaveDialogWidget extends StatelessWidget {
+class SaveDialogWidget extends StatefulWidget {
   final String imagePath;
   final List<int> diseaseIds;
+  final String? initialTitle;
+  final int? detectionId;
   final Function(String) onSave;
-  final TextEditingController _controller = TextEditingController();
 
-  SaveDialogWidget({
+  const SaveDialogWidget({
     super.key,
     required this.imagePath,
     required this.diseaseIds,
+    this.initialTitle,
+    this.detectionId,
     required this.onSave,
   });
+
+  @override
+  State<SaveDialogWidget> createState() => _SaveDialogWidgetState();
+}
+
+class _SaveDialogWidgetState extends State<SaveDialogWidget> {
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialTitle ?? '');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +93,7 @@ class SaveDialogWidget extends StatelessWidget {
               onPressed: () {
                 final title = _controller.text;
                 if (title.isNotEmpty) {
-                  onSave(title);
+                  widget.onSave(title);
                   Navigator.of(context).pop();
                 }
               },
