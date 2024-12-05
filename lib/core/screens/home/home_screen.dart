@@ -10,6 +10,7 @@ import 'package:leafolyze/blocs/history/history_state.dart';
 import 'package:leafolyze/blocs/profile/profile_bloc.dart';
 import 'package:leafolyze/blocs/profile/profile_event.dart';
 import 'package:leafolyze/blocs/profile/profile_state.dart';
+import 'package:leafolyze/core/screens/home/skeleton.dart';
 import 'package:leafolyze/core/widgets/common/diagnosis_item.dart';
 import 'package:leafolyze/repositories/article_repository.dart';
 import 'package:leafolyze/repositories/detection_repository.dart';
@@ -90,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return BlocBuilder<ProfileBloc, ProfileState>(
       builder: (context, state) {
         if (state is ProfileLoading) {
-          return const Center(child: CircularProgressIndicator());
+          return const ProfileShimmer();
         }
         if (state is ProfileError) {
           return const Text('Error loading profile');
@@ -252,7 +253,7 @@ Widget _buildArticleSection({required Function() onPressed}) {
         child: BlocBuilder<ArticleBloc, ArticleState>(
           builder: (context, state) {
             if (state is ArticleLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return const ArticleShimmer();
             }
 
             if (state is ArticleError) {
@@ -421,12 +422,7 @@ Widget _buildRecentDiagnosis() {
 
 Widget _buildContent(HistoryState state) {
   if (state is HistoryLoading) {
-    return const SizedBox(
-      height: 200,
-      child: Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
+    return const DiagnosisShimmer();
   } else if (state is HistoryLoaded) {
     if (state.detections.isEmpty) {
       return const Padding(
@@ -489,3 +485,4 @@ Widget _buildContent(HistoryState state) {
     child: Text('Mulai scan daun untuk melihat diagnosis'),
   );
 }
+

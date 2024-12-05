@@ -7,6 +7,7 @@ import 'package:leafolyze/blocs/auth/auth_state.dart';
 import 'package:leafolyze/blocs/profile/profile_bloc.dart';
 import 'package:leafolyze/blocs/profile/profile_event.dart';
 import 'package:leafolyze/blocs/profile/profile_state.dart';
+import 'package:leafolyze/core/screens/home/skeleton.dart';
 import 'package:leafolyze/models/user_detail.dart';
 import 'package:leafolyze/utils/constants.dart';
 
@@ -66,7 +67,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         builder: (context, state) {
                           if (state is ProfileLoading) {
                             return const Center(
-                                child: CircularProgressIndicator());
+                              child: ProfilePageShimmer(),
+                            );
                           }
                           if (state is ProfileLoaded) {
                             final user = state.user;

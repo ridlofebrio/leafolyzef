@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:leafolyze/blocs/product/product_bloc.dart';
 import 'package:leafolyze/blocs/product/product_event.dart';
 import 'package:leafolyze/blocs/product/product_state.dart';
+import 'package:leafolyze/core/screens/marketplace/skeleton_marketplace.dart';
 import 'package:leafolyze/core/widgets/common/custom_search_bar.dart';
 import 'package:leafolyze/core/widgets/marketplace/detailed_product_card.dart';
 import 'package:leafolyze/utils/constants.dart';
@@ -175,9 +176,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
   Widget _buildProductList(ProductState state) {
     if (state is ProductLoading) {
-      return const SliverFillRemaining(
-        child: Center(child: CircularProgressIndicator()),
-      );
+      return const ProductShimmer();
     }
 
     if (state is ProductLoaded) {
