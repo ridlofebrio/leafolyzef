@@ -10,6 +10,7 @@ import 'package:leafolyze/blocs/history/history_state.dart';
 import 'package:leafolyze/blocs/profile/profile_bloc.dart';
 import 'package:leafolyze/blocs/profile/profile_event.dart';
 import 'package:leafolyze/blocs/profile/profile_state.dart';
+import 'package:leafolyze/core/screens/home/skeleton.dart';
 import 'package:leafolyze/core/widgets/common/diagnosis_item.dart';
 import 'package:leafolyze/repositories/article_repository.dart';
 import 'package:leafolyze/repositories/detection_repository.dart';
@@ -17,7 +18,6 @@ import 'package:leafolyze/services/api_service.dart';
 import 'package:leafolyze/services/storage_service.dart';
 import 'package:leafolyze/utils/constants.dart';
 import 'package:leafolyze/core/screens/diagnosis/result_screen.dart';
-import 'package:shimmer_animation/shimmer_animation.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -486,128 +486,3 @@ Widget _buildContent(HistoryState state) {
   );
 }
 
-class ArticleShimmer extends StatelessWidget {
-  const ArticleShimmer({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 120,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: 3,
-        itemBuilder: (context, index) {
-          return Shimmer(
-            colorOpacity: 0.3,
-            child: Container(
-              width: 240,
-              margin: EdgeInsets.only(right: AppSpacing.spacingS),
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(AppBorderRadius.radiusS),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
-
-class DiagnosisShimmer extends StatelessWidget {
-  const DiagnosisShimmer({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      constraints: const BoxConstraints(
-        minHeight: 350,
-      ),
-      padding: EdgeInsets.fromLTRB(
-        AppSpacing.spacingS,
-        0,
-        AppSpacing.spacingS,
-        AppSpacing.spacingMS,
-      ),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(AppBorderRadius.radiusM),
-        boxShadow: [
-          BoxShadow(
-            offset: Offset(0, 0),
-            blurRadius: 15,
-            color: Colors.black.withOpacity(0.08),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: List.generate(
-          3,
-          (index) => Padding(
-            padding: EdgeInsets.only(bottom: AppSpacing.spacingS),
-            child: Shimmer(
-              colorOpacity: 0.3,
-              child: Container(
-                height: 100,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(AppBorderRadius.radiusS),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class ProfileShimmer extends StatelessWidget {
-  const ProfileShimmer({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Shimmer(
-              colorOpacity: 0.3,
-              child: Container(
-                width: 120,
-                height: 20,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(AppBorderRadius.radiusXS),
-                ),
-              ),
-            ),
-            SizedBox(height: AppSpacing.spacingXS),
-            Shimmer(
-              colorOpacity: 0.3,
-              child: Container(
-                width: 150,
-                height: 24,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(AppBorderRadius.radiusXS),
-                ),
-              ),
-            ),
-          ],
-        ),
-        Shimmer(
-          colorOpacity: 0.3,
-          child: CircleAvatar(
-            radius: 20,
-            backgroundColor: Colors.grey[300],
-          ),
-        ),
-      ],
-    );
-  }
-}
