@@ -182,3 +182,89 @@ class ProfilePageShimmer extends StatelessWidget {
     );
   }
 }
+
+class HistoryShimmer extends StatelessWidget {
+  const HistoryShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      padding: EdgeInsets.all(AppSpacing.spacingM),
+      child: ListView.builder(
+        itemCount: 5,
+        itemBuilder: (context, index) {
+          return Container(
+            margin: EdgeInsets.only(bottom: AppSpacing.spacingM),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(AppBorderRadius.radiusM),
+              boxShadow: [
+                BoxShadow(
+                  offset: Offset(0, 0),
+                  blurRadius: 15,
+                  color: Colors.black.withOpacity(0.08),
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(AppSpacing.spacingM),
+              child: Row(
+                children: [
+                  // Gambar shimmer
+                  Shimmer(
+                    colorOpacity: 0.3,
+                    child: Container(
+                      width: 80,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius:
+                            BorderRadius.circular(AppBorderRadius.radiusS),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: AppSpacing.spacingM),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Judul shimmer
+                        Shimmer(
+                          colorOpacity: 0.3,
+                          child: Container(
+                            width: double.infinity,
+                            height: 20,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[300],
+                              borderRadius: BorderRadius.circular(
+                                  AppBorderRadius.radiusXS),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: AppSpacing.spacingS),
+                        // Subtitle shimmer
+                        Shimmer(
+                          colorOpacity: 0.3,
+                          child: Container(
+                            width: 150,
+                            height: 16,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[300],
+                              borderRadius: BorderRadius.circular(
+                                  AppBorderRadius.radiusXS),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
