@@ -5,7 +5,7 @@ import 'package:leafolyze/blocs/product/product_state.dart';
 import 'package:leafolyze/blocs/shop/shop_bloc.dart';
 import 'package:leafolyze/blocs/shop/shop_event.dart';
 import 'package:leafolyze/blocs/shop/shop_state.dart';
-import 'package:leafolyze/core/screens/marketplace/skeleton_market.dart';
+import 'package:leafolyze/core/screens/marketplace/skeleton_marketplace.dart';
 import 'package:leafolyze/models/product.dart';
 import 'package:leafolyze/utils/constants.dart';
 import 'package:url_launcher/url_launcher.dart';

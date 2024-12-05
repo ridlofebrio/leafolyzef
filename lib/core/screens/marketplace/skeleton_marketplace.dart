@@ -154,3 +154,126 @@ class MarketplaceDetailShimmer extends StatelessWidget {
     );
   }
 }
+
+class ProductShimmer extends StatelessWidget {
+  const ProductShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverGrid(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 0.63,
+        mainAxisSpacing: AppSpacing.spacingMS,
+        crossAxisSpacing: AppSpacing.spacingMS,
+      ),
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          return Container(
+            decoration: BoxDecoration(
+              color: AppColors.backgroundColor,
+              borderRadius: BorderRadius.circular(AppBorderRadius.radiusXS),
+              boxShadow: [
+                BoxShadow(
+                  offset: const Offset(0, 0),
+                  color: Colors.black.withOpacity(0.25),
+                  blurRadius: 4,
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(AppSpacing.spacingMS),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Gambar shimmer
+                  Shimmer(
+                    colorOpacity: 0.3,
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(AppBorderRadius.radiusXS),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.spacingMS),
+                  // Nama produk shimmer
+                  Shimmer(
+                    colorOpacity: 0.3,
+                    child: Container(
+                      width: double.infinity,
+                      height: 16,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(AppBorderRadius.radiusXXS),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.spacingXXS),
+                  // Harga shimmer
+                  Shimmer(
+                    colorOpacity: 0.3,
+                    child: Container(
+                      width: 100,
+                      height: 14,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(AppBorderRadius.radiusXXS),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.spacingXXS),
+                  // Nama toko shimmer
+                  Shimmer(
+                    colorOpacity: 0.3,
+                    child: Container(
+                      width: 120,
+                      height: 12,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(AppBorderRadius.radiusXXS),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.spacingXXXS),
+                  // Lokasi shimmer
+                  Row(
+                    children: [
+                      Shimmer(
+                        colorOpacity: 0.3,
+                        child: Container(
+                          width: 12,
+                          height: 12,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.spacingXXXS),
+                      Shimmer(
+                        colorOpacity: 0.3,
+                        child: Container(
+                          width: 80,
+                          height: 12,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(AppBorderRadius.radiusXXS),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+        childCount: 6, // Menampilkan 6 item shimmer
+      ),
+    );
+  }
+}
