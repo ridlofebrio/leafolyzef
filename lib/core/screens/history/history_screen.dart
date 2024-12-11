@@ -53,6 +53,7 @@ class HistoryScreen extends StatelessWidget {
                     child: Text('Belum ada riwayat deteksi'),
                   );
                 }
+
                 return Container(
                   color: Colors.white,
                   padding: EdgeInsets.all(AppSpacing.spacingM),
