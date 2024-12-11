@@ -62,8 +62,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   Stack(
                     clipBehavior: Clip.none,
                     children: [
-                      Image.asset(
-                        'assets/images/group-243.png',
+                      Center(
+                        child: Image.asset(
+                          'assets/images/group-243.png',
+                        ),
                       ),
                     ],
                   ),
