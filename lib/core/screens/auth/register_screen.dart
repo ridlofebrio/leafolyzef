@@ -36,7 +36,7 @@ class RegisterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     context.read<AuthBloc>().add(AuthCheckRequested());
-    
+
     return Scaffold(
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
@@ -56,7 +56,10 @@ class RegisterScreen extends StatelessWidget {
               icon: Icons.check_circle,
               iconColor: Colors.green,
               onClose: () {
-                context.go('/home'); // Navigate to home on success
+                for (var field in registerInputFields) {
+                  field.controller.clear();
+                }
+                context.go('/home');
               },
             );
           } else if (state is AuthError) {
@@ -71,7 +74,8 @@ class RegisterScreen extends StatelessWidget {
         },
         child: SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacingM),
+            padding:
+                const EdgeInsets.symmetric(horizontal: AppSpacing.spacingM),
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -91,9 +95,12 @@ class RegisterScreen extends StatelessWidget {
                         onPressed: () {
                           final name = registerInputFields[0].controller.text;
                           final email = registerInputFields[1].controller.text;
-                          final password = registerInputFields[2].controller.text;
+                          final password =
+                              registerInputFields[2].controller.text;
 
-                          if (name.isEmpty || email.isEmpty || password.isEmpty) {
+                          if (name.isEmpty ||
+                              email.isEmpty ||
+                              password.isEmpty) {
                             CustomDialog.showPopupDialog(
                               context: context,
                               title: 'Validation Error',
@@ -110,10 +117,14 @@ class RegisterScreen extends StatelessWidget {
                                   name: name,
                                   email: email,
                                   password: password,
-                                  birth: '2000-01-01', // Replace with actual birth data
-                                  gender: 'Other', // Replace with actual gender data
-                                  address: 'Unknown', // Replace with actual address
-                                  access: 'petani', // Replace with actual access level
+                                  birth:
+                                      '2000-01-01', // Replace with actual birth data
+                                  gender:
+                                      'Other', // Replace with actual gender data
+                                  address:
+                                      'Unknown', // Replace with actual address
+                                  access:
+                                      'petani', // Replace with actual access level
                                 ),
                               );
                         },
