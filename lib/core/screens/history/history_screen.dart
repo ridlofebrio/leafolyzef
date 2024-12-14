@@ -6,7 +6,6 @@ import 'package:leafolyze/blocs/detection/detection_state.dart';
 import 'package:leafolyze/blocs/history/history_bloc.dart';
 import 'package:leafolyze/blocs/history/history_event.dart';
 import 'package:leafolyze/blocs/history/history_state.dart';
-import 'package:leafolyze/core/screens/diagnosis/result_screen.dart';
 import 'package:leafolyze/core/screens/home/skeleton.dart';
 import 'package:leafolyze/core/widgets/common/diagnosis_item.dart';
 import 'package:leafolyze/utils/constants.dart';

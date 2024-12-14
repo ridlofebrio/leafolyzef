@@ -77,7 +77,7 @@ final goRouter = GoRouter(
               isRegenerate: extra?['isRegenerate'] as bool? ?? false,
               detectionId: extra?['detectionId'] as int?,
               title: extra?['title'] as String?,
-              diseaseId: extra?['diseaseId'] as int?,
+              diseaseIds: extra?['diseaseIds'] as List<int>?,
               skipLabelInput: extra?['skipLabelInput'] as bool? ?? false,
             );
           },
@@ -89,8 +89,7 @@ final goRouter = GoRouter(
                 return ResultScreen(
                   detectionId: extra['detectionId'] as int,
                   title: extra['title'] as String,
-                  diseaseIds:
-                      List<int>.from(extra['diseaseIds'] as List), // Changed
+                  diseaseIds: List<int>.from(extra['diseaseIds'] as List),
                   imageUrl: extra['imageUrl'] as String,
                   description: extra['description'] as String,
                   treatmentTitle: extra['treatmentTitle'] as String,

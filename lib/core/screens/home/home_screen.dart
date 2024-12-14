@@ -17,7 +17,6 @@ import 'package:leafolyze/repositories/detection_repository.dart';
 import 'package:leafolyze/services/api_service.dart';
 import 'package:leafolyze/services/storage_service.dart';
 import 'package:leafolyze/utils/constants.dart';
-import 'package:leafolyze/core/screens/diagnosis/result_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

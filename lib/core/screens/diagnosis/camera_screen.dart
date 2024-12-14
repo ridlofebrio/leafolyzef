@@ -17,7 +17,7 @@ class CameraScreen extends StatefulWidget {
   final bool isRegenerate;
   final int? detectionId;
   final String? title;
-  final int? diseaseId;
+  final List<int>? diseaseIds;
   final bool skipLabelInput;
 
   const CameraScreen({
@@ -26,7 +26,7 @@ class CameraScreen extends StatefulWidget {
     this.isRegenerate = false,
     this.detectionId,
     this.title,
-    this.diseaseId,
+    this.diseaseIds,
     this.skipLabelInput = false,
   });
 
@@ -146,7 +146,7 @@ class _CameraScreenState extends State<CameraScreen> {
           context: context,
           builder: (dialogContext) => SaveDialogWidget(
             imagePath: image.path,
-            diseaseIds: [widget.diseaseId ?? 3],
+            diseaseIds: widget.diseaseIds ?? [3],
             initialTitle: widget.title,
             onSave: (String title) {
               context.read<DetectionBloc>().add(
@@ -154,7 +154,7 @@ class _CameraScreenState extends State<CameraScreen> {
                       id: widget.detectionId!,
                       title: title,
                       imagePath: image.path,
-                      diseaseIds: [widget.diseaseId ?? 3],
+                      diseaseIds: widget.diseaseIds ?? [3],
                     ),
                   );
             },
@@ -171,21 +171,26 @@ class _CameraScreenState extends State<CameraScreen> {
 
       if (!mounted) return;
 
-      final detection = detections[0];
-      final disease = detection['class'] as String;
-      final diseaseId = _mapDiseaseToId(disease);
+      // final detection = detections[0];
+      // final disease = detection['class'] as String;
+      // final diseaseId = _mapDiseaseToId(disease);
+
+      final List<int> diseaseIds = detections.map((detection) {
+        final disease = detection['class'] as String;
+        return _mapDiseaseToId(disease);
+      }).toList();
 
       showDialog(
         context: context,
         builder: (dialogContext) => SaveDialogWidget(
           imagePath: image.path,
-          diseaseIds: [diseaseId],
+          diseaseIds: diseaseIds,
           onSave: (String title) {
             context.read<DetectionBloc>().add(
                   SaveDetection(
                     title: title,
                     imagePath: image.path,
-                    diseaseIds: [diseaseId],
+                    diseaseIds: diseaseIds,
                   ),
                 );
           },
