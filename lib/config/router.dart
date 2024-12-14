@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:leafolyze/core/screens/diagnosis/camera_screen.dart';
+import 'package:leafolyze/core/screens/diagnosis/result_screen.dart';
 import 'package:leafolyze/core/screens/history/history_screen.dart';
 import 'package:leafolyze/core/screens/home/article_detail_screen.dart';
 import 'package:leafolyze/core/screens/home/article_list_screen.dart';
@@ -19,9 +20,10 @@ import 'package:leafolyze/core/screens/profile/personal_information_screen.dart'
 import 'package:leafolyze/core/screens/profile/profile_screen.dart';
 import 'package:leafolyze/core/screens/profile/reset_password_screen.dart';
 
-final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> _rootNavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: 'root');
 final GlobalKey<NavigatorState> _shellNavigatorKey =
-    GlobalKey<NavigatorState>();
+    GlobalKey<NavigatorState>(debugLabel: 'shell');
 
 final goRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
@@ -50,28 +52,55 @@ final goRouter = GoRouter(
       },
       routes: [
         GoRoute(
-          path: '/home',
-          builder: (context, state) => const HomeScreen(),
-          routes: [
-            GoRoute(
-              path: 'article',
-              parentNavigatorKey: _rootNavigatorKey,
-              builder: (context, state) => const ArticleListScreen(),
-              routes: [
-                GoRoute(
-                  path: ':id',
-                  parentNavigatorKey: _rootNavigatorKey,
-                  builder: (context, state) => ArticleDetailScreen(
-                    id: int.parse(state.pathParameters['id']!),
+            path: '/home',
+            builder: (context, state) => const HomeScreen(),
+            routes: [
+              GoRoute(
+                path: 'article',
+                builder: (context, state) => const ArticleListScreen(),
+                routes: [
+                  GoRoute(
+                    path: ':id',
+                    builder: (context, state) => ArticleDetailScreen(
+                      id: int.parse(state.pathParameters['id']!),
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
-        ),
+                ],
+              ),
+            ]),
         GoRoute(
           path: '/diagnose',
-          builder: (context, state) => const CameraScreen(),
+          builder: (context, state) {
+            final extra = state.extra as Map<String, dynamic>?;
+            return CameraScreen(
+              imageUrl: extra?['imageUrl'] as String?,
+              isRegenerate: extra?['isRegenerate'] as bool? ?? false,
+              detectionId: extra?['detectionId'] as int?,
+              title: extra?['title'] as String?,
+              diseaseId: extra?['diseaseId'] as int?,
+              skipLabelInput: extra?['skipLabelInput'] as bool? ?? false,
+            );
+          },
+          routes: [
+            GoRoute(
+              path: 'result',
+              builder: (context, state) {
+                final extra = state.extra as Map<String, dynamic>;
+                return ResultScreen(
+                  detectionId: extra['detectionId'] as int,
+                  title: extra['title'] as String,
+                  diseaseId: extra['diseaseId'] as int,
+                  imageUrl: extra['imageUrl'] as String,
+                  description: extra['description'] as String,
+                  treatmentTitle: extra['treatmentTitle'] as String,
+                  treatments: List<String>.from(extra['treatments'] as List),
+                  pesticideTitle: extra['pesticideTitle'] as String,
+                  pesticides: List<String>.from(extra['pesticides'] as List),
+                  timestamp: extra['timestamp'] as String,
+                );
+              },
+            ),
+          ],
         ),
         GoRoute(
           path: '/marketplace',
@@ -79,7 +108,6 @@ final goRouter = GoRouter(
           routes: [
             GoRoute(
               path: ':diseaseId',
-              parentNavigatorKey: _rootNavigatorKey,
               builder: (context, state) => ProductListScreen(
                 diseaseId:
                     int.tryParse(state.pathParameters['diseaseId']!) ?? 0,
@@ -87,7 +115,6 @@ final goRouter = GoRouter(
               routes: [
                 GoRoute(
                   path: 'detail/:shopId',
-                  parentNavigatorKey: _rootNavigatorKey,
                   builder: (context, state) {
                     final shopId =
                         int.tryParse(state.pathParameters['shopId']!) ?? 0;
@@ -108,22 +135,18 @@ final goRouter = GoRouter(
             routes: [
               GoRoute(
                 path: 'faq',
-                parentNavigatorKey: _rootNavigatorKey,
                 builder: (context, state) => FaqScreen(),
               ),
               GoRoute(
                 path: 'about',
-                parentNavigatorKey: _rootNavigatorKey,
                 builder: (context, state) => AboutScreen(),
               ),
               GoRoute(
                 path: 'personal-information',
-                parentNavigatorKey: _rootNavigatorKey,
                 builder: (context, state) => PersonalInformationScreen(),
               ),
               GoRoute(
                 path: 'password-security',
-                parentNavigatorKey: _rootNavigatorKey,
                 builder: (context, state) => ResetPasswordScreen(),
               ),
             ]),

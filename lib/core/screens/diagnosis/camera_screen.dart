@@ -11,14 +11,23 @@ import 'package:leafolyze/core/widgets/diagnosis/save_dialog_widget.dart';
 import 'package:leafolyze/services/object_detector.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:leafolyze/core/screens/diagnosis/result_screen.dart';
 
 class CameraScreen extends StatefulWidget {
-  final Map<String, dynamic>? extra;
+  final String? imageUrl;
+  final bool isRegenerate;
+  final int? detectionId;
+  final String? title;
+  final int? diseaseId;
+  final bool skipLabelInput;
 
   const CameraScreen({
     super.key,
-    this.extra,
+    this.imageUrl,
+    this.isRegenerate = false,
+    this.detectionId,
+    this.title,
+    this.diseaseId,
+    this.skipLabelInput = false,
   });
 
   @override
@@ -123,47 +132,29 @@ class _CameraScreenState extends State<CameraScreen> {
     });
 
     try {
-      if (widget.extra != null && widget.extra!['isRegenerate'] == true) {
-        if (!mounted) return;
-
-        final String newImagePath = image.path;
+      if (widget.isRegenerate) {
         final detections = await _objectDetector.detectFromImage(image);
 
         if (detections.isEmpty) {
-          if (!mounted) return;
-          setState(() {
-            _isProcessing = false;
-          });
-          await showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text('Tidak Ada Penyakit Terdeteksi'),
-              content: const Text(
-                  'Tidak ada penyakit tanaman yang terdeteksi dalam gambar ini. Silakan coba lagi dengan gambar yang lebih jelas.'),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('OK'),
-                ),
-              ],
-            ),
-          );
+          _handleNoDetection();
           return;
         }
 
+        if (!mounted) return;
+
         showDialog(
           context: context,
-          builder: (context) => SaveDialogWidget(
-            imagePath: newImagePath,
-            diseaseIds: [widget.extra!['diseaseId'] ?? 3],
-            initialTitle: widget.extra!['title'],
+          builder: (dialogContext) => SaveDialogWidget(
+            imagePath: image.path,
+            diseaseIds: [widget.diseaseId ?? 3],
+            initialTitle: widget.title,
             onSave: (String title) {
               context.read<DetectionBloc>().add(
                     UpdateDetection(
-                      id: widget.extra!['detectionId'],
+                      id: widget.detectionId!,
                       title: title,
-                      imagePath: newImagePath,
-                      diseaseIds: [widget.extra!['diseaseId'] ?? 3],
+                      imagePath: image.path,
+                      diseaseIds: [widget.diseaseId ?? 3],
                     ),
                   );
             },
@@ -173,26 +164,8 @@ class _CameraScreenState extends State<CameraScreen> {
       }
 
       final detections = await _objectDetector.detectFromImage(image);
-
       if (detections.isEmpty) {
-        if (!mounted) return;
-        setState(() {
-          _isProcessing = false;
-        });
-        await showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Tidak Ada Penyakit Terdeteksi'),
-            content: const Text(
-                'Tidak ada penyakit tanaman yang terdeteksi dalam gambar ini. Silakan coba lagi dengan gambar yang lebih jelas.'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('OK'),
-              ),
-            ],
-          ),
-        );
+        _handleNoDetection();
         return;
       }
 
@@ -204,7 +177,7 @@ class _CameraScreenState extends State<CameraScreen> {
 
       showDialog(
         context: context,
-        builder: (context) => SaveDialogWidget(
+        builder: (dialogContext) => SaveDialogWidget(
           imagePath: image.path,
           diseaseIds: [diseaseId],
           onSave: (String title) {
@@ -219,16 +192,7 @@ class _CameraScreenState extends State<CameraScreen> {
         ),
       );
     } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _isProcessing = false;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error memproses gambar: ${e.toString()}'),
-          duration: const Duration(seconds: 3),
-        ),
-      );
+      _handleError(e);
     }
   }
 
@@ -260,6 +224,40 @@ class _CameraScreenState extends State<CameraScreen> {
     }
   }
 
+  void _handleNoDetection() {
+    if (!mounted) return;
+    setState(() {
+      _isProcessing = false;
+    });
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Tidak Ada Penyakit Terdeteksi'),
+        content: const Text(
+            'Tidak ada penyakit tanaman yang terdeteksi dalam gambar ini. Silakan coba lagi dengan gambar yang lebih jelas.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _handleError(dynamic error) {
+    if (!mounted) return;
+    setState(() {
+      _isProcessing = false;
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Error memproses gambar: ${error.toString()}'),
+        duration: const Duration(seconds: 3),
+      ),
+    );
+  }
+
   int _mapDiseaseToId(String disease) {
     final Map<String, int> diseaseIds = {
       'Bacterial Spot': 1,
@@ -287,22 +285,18 @@ class _CameraScreenState extends State<CameraScreen> {
           setState(() {
             _isProcessing = false;
           });
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => ResultScreen(
-                detectionId: state.detection?.id ?? 0,
-                title: state.detection?.title ?? '',
-                diseaseId: state.detection?.diseases?.firstOrNull?.id ?? 0,
-                imageUrl: state.detection?.image?.path ?? '',
-                description: 'Deskripsi untuk ${state.detection?.title ?? ''}',
-                treatmentTitle: 'Pengobatan',
-                treatments: [],
-                pesticideTitle: 'Pestisida',
-                pesticides: [],
-                timestamp: DateTime.now().toString(),
-              ),
-            ),
-          );
+          context.push('/diagnose/result', extra: {
+            'detectionId': state.detection?.id ?? 0,
+            'title': state.detection?.title ?? '',
+            'diseaseId': state.detection?.diseases?.firstOrNull?.id ?? 0,
+            'imageUrl': state.detection?.image?.path ?? '',
+            'description': 'Deskripsi untuk ${state.detection?.title ?? ''}',
+            'treatmentTitle': 'Pengobatan',
+            'treatments': [],
+            'pesticideTitle': 'Pestisida',
+            'pesticides': [],
+            'timestamp': DateTime.now().toString(),
+          });
         } else if (state is DetectionError) {
           setState(() {
             _isProcessing = false;

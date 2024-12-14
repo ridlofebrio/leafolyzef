@@ -5,6 +5,13 @@ abstract class DetectionEvent extends Equatable {
 
   @override
   List<Object?> get props => [];
+
+  const factory DetectionEvent.update({
+    required int id,
+    required String title,
+    required String imagePath,
+    required List<int> diseaseIds,
+  }) = UpdateDetection;
 }
 
 class SaveDetection extends DetectionEvent {
@@ -24,19 +31,19 @@ class SaveDetection extends DetectionEvent {
 
 class UpdateDetection extends DetectionEvent {
   final int id;
-  final String? title;
-  final String? imagePath;
-  final List<int>? diseaseIds;
+  final String title;
+  final String imagePath;
+  final List<int> diseaseIds;
 
   const UpdateDetection({
     required this.id,
-    this.title,
-    this.imagePath,
-    this.diseaseIds,
+    required this.title,
+    required this.imagePath,
+    required this.diseaseIds,
   });
 
   @override
-  List<Object?> get props => [id, title, imagePath, diseaseIds];
+  List<Object> get props => [id, title, imagePath, diseaseIds];
 }
 
 class Delete extends DetectionEvent {

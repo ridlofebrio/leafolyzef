@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:leafolyze/blocs/detection/detection_bloc.dart';
 import 'package:leafolyze/blocs/detection/detection_state.dart';
 import 'package:leafolyze/blocs/history/history_bloc.dart';
@@ -9,7 +10,6 @@ import 'package:leafolyze/core/screens/diagnosis/result_screen.dart';
 import 'package:leafolyze/core/screens/home/skeleton.dart';
 import 'package:leafolyze/core/widgets/common/diagnosis_item.dart';
 import 'package:leafolyze/utils/constants.dart';
-
 
 class HistoryScreen extends StatelessWidget {
   const HistoryScreen({super.key});
@@ -77,24 +77,20 @@ class HistoryScreen extends StatelessWidget {
                         ),
                         child: GestureDetector(
                           onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => ResultScreen(
-                                  detectionId: detection.id ?? 0,
-                                  title: detection.title,
-                                  diseaseId:
-                                      detection.diseases?.firstOrNull?.id ?? 0,
-                                  imageUrl: detection.image?.path ?? '',
-                                  description:
-                                      'Deskripsi untuk ${detection.title}',
-                                  treatmentTitle: 'Pengobatan',
-                                  treatments: [],
-                                  pesticideTitle: 'Pestisida',
-                                  pesticides: [],
-                                  timestamp: DateTime.now().toString(),
-                                ),
-                              ),
-                            );
+                            context.push('/diagnose/result', extra: {
+                              'detectionId': detection.id ?? 0,
+                              'title': detection.title,
+                              'diseaseId':
+                                  detection.diseases?.firstOrNull?.id ?? 0,
+                              'imageUrl': detection.image?.path ?? '',
+                              'description':
+                                  'Deskripsi untuk ${detection.title}',
+                              'treatmentTitle': 'Pengobatan',
+                              'treatments': [],
+                              'pesticideTitle': 'Pestisida',
+                              'pesticides': [],
+                              'timestamp': DateTime.now().toString(),
+                            });
                           },
                           child: Padding(
                             padding: EdgeInsets.all(AppSpacing.spacingM),

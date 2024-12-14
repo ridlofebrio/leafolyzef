@@ -213,8 +213,7 @@ class _ResultScreenState extends State<ResultScreen> {
                         builder: (context) => AlertDialog(
                           title: const Text('Konfirmasi Hapus'),
                           content: const Text(
-                            'Apakah Anda yakin ingin menghapus hasil diagnosis ini?'
-                          ),
+                              'Apakah Anda yakin ingin menghapus hasil diagnosis ini?'),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.of(context).pop(false),
@@ -233,8 +232,10 @@ class _ResultScreenState extends State<ResultScreen> {
 
                       if (shouldDelete == true) {
                         // Dispatch event untuk menghapus deteksi
-                        context.read<DetectionBloc>().add(Delete(widget.detectionId));
-                        
+                        context
+                            .read<DetectionBloc>()
+                            .add(Delete(widget.detectionId));
+
                         // Kembali ke halaman sebelumnya
                         if (context.mounted) {
                           context.pop();
@@ -342,14 +343,14 @@ class _ResultScreenState extends State<ResultScreen> {
 
   void _handleRegenerate() async {
     context.read<DetectionBloc>().add(
-      UpdateDetection(
-        id: widget.detectionId,
-        title: widget.title,
-        imagePath: widget.imageUrl,
-        diseaseIds: [widget.diseaseId],
-      ),
-    );
-    
+          UpdateDetection(
+            id: widget.detectionId,
+            title: widget.title,
+            imagePath: widget.imageUrl,
+            diseaseIds: [widget.diseaseId],
+          ),
+        );
+
     context.push('/diagnose', extra: {
       'imageUrl': widget.imageUrl,
       'isRegenerate': true,
