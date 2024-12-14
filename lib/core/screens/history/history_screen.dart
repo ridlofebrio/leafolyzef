@@ -80,8 +80,10 @@ class HistoryScreen extends StatelessWidget {
                             context.push('/diagnose/result', extra: {
                               'detectionId': detection.id ?? 0,
                               'title': detection.title,
-                              'diseaseId':
-                                  detection.diseases?.firstOrNull?.id ?? 0,
+                              'diseaseIds': detection.diseases
+                                      ?.map((d) => d.id)
+                                      .toList() ??
+                                  [],
                               'imageUrl': detection.image?.path ?? '',
                               'description':
                                   'Deskripsi untuk ${detection.title}',

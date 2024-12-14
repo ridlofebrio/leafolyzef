@@ -288,7 +288,8 @@ class _CameraScreenState extends State<CameraScreen> {
           context.push('/diagnose/result', extra: {
             'detectionId': state.detection?.id ?? 0,
             'title': state.detection?.title ?? '',
-            'diseaseId': state.detection?.diseases?.firstOrNull?.id ?? 0,
+            'diseaseIds':
+                state.detection?.diseases?.map((d) => d.id).toList() ?? [],
             'imageUrl': state.detection?.image?.path ?? '',
             'description': 'Deskripsi untuk ${state.detection?.title ?? ''}',
             'treatmentTitle': 'Pengobatan',

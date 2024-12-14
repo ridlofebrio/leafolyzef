@@ -89,7 +89,8 @@ final goRouter = GoRouter(
                 return ResultScreen(
                   detectionId: extra['detectionId'] as int,
                   title: extra['title'] as String,
-                  diseaseId: extra['diseaseId'] as int,
+                  diseaseIds:
+                      List<int>.from(extra['diseaseIds'] as List), // Changed
                   imageUrl: extra['imageUrl'] as String,
                   description: extra['description'] as String,
                   treatmentTitle: extra['treatmentTitle'] as String,
@@ -99,7 +100,7 @@ final goRouter = GoRouter(
                   timestamp: extra['timestamp'] as String,
                 );
               },
-            ),
+            )
           ],
         ),
         GoRoute(

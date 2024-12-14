@@ -12,7 +12,7 @@ import 'package:go_router/go_router.dart';
 
 class ResultScreen extends StatefulWidget {
   final String title;
-  final int diseaseId;
+  final List<int> diseaseIds;
   final String imageUrl;
   final String description;
   final String treatmentTitle;
@@ -25,7 +25,7 @@ class ResultScreen extends StatefulWidget {
   const ResultScreen({
     super.key,
     required this.title,
-    required this.diseaseId,
+    required this.diseaseIds,
     required this.imageUrl,
     required this.description,
     required this.treatmentTitle,
@@ -44,12 +44,13 @@ class _ResultScreenState extends State<ResultScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<ProductBloc>().add(LoadProductsByDisease(widget.diseaseId));
+    for (var diseaseId in widget.diseaseIds) {
+      context.read<ProductBloc>().add(LoadProductsByDisease(diseaseId));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final diseaseData = DiseaseDataProvider.diseases[widget.diseaseId];
     return Scaffold(
       backgroundColor: AppColors.primaryColor,
       appBar: AppBar(
@@ -133,29 +134,39 @@ class _ResultScreenState extends State<ResultScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    Text(
-                      diseaseData?.name ?? '',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      diseaseData?.description ?? '',
-                      style: TextStyle(fontSize: 14),
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      widget.treatmentTitle,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    ...(diseaseData?.treatments ?? [])
-                        .map((treatment) => _buildBulletPoint(treatment)),
+                    ...widget.diseaseIds.map((diseaseId) {
+                      final diseaseData =
+                          DiseaseDataProvider.diseases[diseaseId];
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 20),
+                          Text(
+                            diseaseData?.name ?? '',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            diseaseData?.description ?? '',
+                            style: TextStyle(fontSize: 14),
+                          ),
+                          const SizedBox(height: 20),
+                          Text(
+                            widget.treatmentTitle,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          ...(diseaseData?.treatments ?? [])
+                              .map((treatment) => _buildBulletPoint(treatment)),
+                        ],
+                      );
+                    }).toList(),
                     const SizedBox(height: 20),
                     Text(
                       widget.pesticideTitle,
@@ -347,7 +358,7 @@ class _ResultScreenState extends State<ResultScreen> {
             id: widget.detectionId,
             title: widget.title,
             imagePath: widget.imageUrl,
-            diseaseIds: [widget.diseaseId],
+            diseaseIds: widget.diseaseIds,
           ),
         );
 
@@ -356,7 +367,7 @@ class _ResultScreenState extends State<ResultScreen> {
       'isRegenerate': true,
       'detectionId': widget.detectionId,
       'title': widget.title,
-      'diseaseId': widget.diseaseId,
+      'diseaseIds': widget.diseaseIds,
       'skipLabelInput': true,
     });
   }
