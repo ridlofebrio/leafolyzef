@@ -132,38 +132,8 @@ class _CameraScreenState extends State<CameraScreen> {
     });
 
     try {
-      if (widget.isRegenerate) {
-        final detections = await _objectDetector.detectFromImage(image);
-
-        if (detections.isEmpty) {
-          _handleNoDetection();
-          return;
-        }
-
-        if (!mounted) return;
-
-        showDialog(
-          context: context,
-          builder: (dialogContext) => SaveDialogWidget(
-            imagePath: image.path,
-            diseaseIds: widget.diseaseIds ?? [3],
-            initialTitle: widget.title,
-            onSave: (String title) {
-              context.read<DetectionBloc>().add(
-                    UpdateDetection(
-                      id: widget.detectionId!,
-                      title: title,
-                      imagePath: image.path,
-                      diseaseIds: widget.diseaseIds ?? [3],
-                    ),
-                  );
-            },
-          ),
-        );
-        return;
-      }
-
       final detections = await _objectDetector.detectFromImage(image);
+
       if (detections.isEmpty) {
         _handleNoDetection();
         return;
@@ -171,33 +141,51 @@ class _CameraScreenState extends State<CameraScreen> {
 
       if (!mounted) return;
 
-      // final detection = detections[0];
-      // final disease = detection['class'] as String;
-      // final diseaseId = _mapDiseaseToId(disease);
-
-      final List<int> diseaseIds = detections.map((detection) {
+      final List<int> detectedDiseaseIds = detections.map((detection) {
         final disease = detection['class'] as String;
         return _mapDiseaseToId(disease);
       }).toList();
+
+      final diseaseIds =
+          widget.isRegenerate ? (widget.diseaseIds ?? [3]) : detectedDiseaseIds;
 
       showDialog(
         context: context,
         builder: (dialogContext) => SaveDialogWidget(
           imagePath: image.path,
           diseaseIds: diseaseIds,
+          initialTitle: widget.isRegenerate ? widget.title : null,
           onSave: (String title) {
-            context.read<DetectionBloc>().add(
-                  SaveDetection(
-                    title: title,
-                    imagePath: image.path,
-                    diseaseIds: diseaseIds,
-                  ),
-                );
+            if (widget.isRegenerate) {
+              context.read<DetectionBloc>().add(
+                    UpdateDetection(
+                      id: widget.detectionId!,
+                      title: title,
+                      imagePath: image.path,
+                      diseaseIds: diseaseIds,
+                    ),
+                  );
+            } else {
+              context.read<DetectionBloc>().add(
+                    SaveDetection(
+                      title: title,
+                      imagePath: image.path,
+                      diseaseIds: diseaseIds,
+                    ),
+                  );
+            }
+            if (!mounted) return;
           },
         ),
       );
     } catch (e) {
       _handleError(e);
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isProcessing = false;
+        });
+      }
     }
   }
 

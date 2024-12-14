@@ -353,15 +353,6 @@ class _ResultScreenState extends State<ResultScreen> {
   }
 
   void _handleRegenerate() async {
-    context.read<DetectionBloc>().add(
-          UpdateDetection(
-            id: widget.detectionId,
-            title: widget.title,
-            imagePath: widget.imageUrl,
-            diseaseIds: widget.diseaseIds,
-          ),
-        );
-
     context.push('/diagnose', extra: {
       'imageUrl': widget.imageUrl,
       'isRegenerate': true,
