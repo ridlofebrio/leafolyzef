@@ -66,7 +66,7 @@ class DetectionRepository {
   }) async {
     try {
       final token = await _storageService.getToken();
-      
+
       final formData = FormData.fromMap({
         'title': title,
         'image': await MultipartFile.fromFile(imagePath),
@@ -102,12 +102,10 @@ class DetectionRepository {
   }) async {
     try {
       final token = await _storageService.getToken();
-      
       final formData = FormData.fromMap({
         if (title != null) 'title': title,
-        if (diseaseIds != null) 'disease_ids': diseaseIds,
+        if (diseaseIds != null) 'disease_ids[]': diseaseIds,
       });
-
       if (imagePath != null && !imagePath.startsWith('http')) {
         formData.files.add(
           MapEntry(
@@ -122,11 +120,15 @@ class DetectionRepository {
         data: formData,
         token: token?.bearerToken,
       );
+      print(formData.fields);
 
       final apiResponse = ApiResponse<TomatoLeafDetection>.fromJson(
         response,
         (json) => TomatoLeafDetection.fromJson(json),
       );
+      print("test");
+      print(apiResponse.data);
+      print("test");
 
       if (!apiResponse.isSuccess) {
         throw Exception(apiResponse.message);

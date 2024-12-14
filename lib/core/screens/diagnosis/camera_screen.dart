@@ -141,13 +141,10 @@ class _CameraScreenState extends State<CameraScreen> {
 
       if (!mounted) return;
 
-      final List<int> detectedDiseaseIds = detections.map((detection) {
+      final List<int> diseaseIds = detections.map((detection) {
         final disease = detection['class'] as String;
         return _mapDiseaseToId(disease);
       }).toList();
-
-      final diseaseIds =
-          widget.isRegenerate ? (widget.diseaseIds ?? [3]) : detectedDiseaseIds;
 
       showDialog(
         context: context,
@@ -261,7 +258,7 @@ class _CameraScreenState extends State<CameraScreen> {
       'Target_Spot': 6,
       'black spot': 7,
     };
-    return diseaseIds[disease] ?? 3; // Default to 3 if not found
+    return diseaseIds[disease] ?? 3; 
   }
 
   @override

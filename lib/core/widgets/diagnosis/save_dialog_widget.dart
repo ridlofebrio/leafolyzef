@@ -106,7 +106,7 @@ class _SaveDialogWidgetState extends State<SaveDialogWidget> {
                     const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
               ),
               child: Text(
-                "Save",
+                widget.diseaseIds.toString(),
                 style: TextStyle(color: Colors.white),
               ),
             ),
