@@ -5,6 +5,7 @@ import 'package:leafolyze/blocs/profile/profile_event.dart';
 import 'package:leafolyze/blocs/profile/profile_state.dart';
 import 'package:leafolyze/core/widgets/notification/custom_dialog.dart';
 import 'package:go_router/go_router.dart';
+import 'package:leafolyze/utils/constants.dart';
 
 class ResetPasswordScreen extends StatelessWidget {
   final TextEditingController currentPasswordController =
@@ -84,7 +85,7 @@ class ResetPasswordScreen extends StatelessWidget {
                 ),
                 obscureText: true,
               ),
-              const SizedBox(height: 20.0),
+              const SizedBox(height: 50.0),
               BlocBuilder<ProfileBloc, ProfileState>(
                 builder: (context, state) {
                   return ElevatedButton(
@@ -114,10 +115,14 @@ class ResetPasswordScreen extends StatelessWidget {
                     },
                     child: const Text(
                       'Update Password',
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontFamily: 'Poppins',
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.bold),
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
+                      backgroundColor: AppColors.primaryColor,
                     ),
                   );
                 },

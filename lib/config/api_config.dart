@@ -2,8 +2,8 @@ import 'dart:io';
 
 class ApiConfig {
   static String baseUrl = Platform.isAndroid
-      ? 'https://160.19.167.23/' // Android 
-      : 'https://160.19.167.23/'; // iOS 
+      ? 'https://160.19.167.23' // Android
+      : 'https://160.19.167.23'; // iOS
 
   static const String apiVersion = 'v1';
   static const Duration timeout = Duration(seconds: 30);
