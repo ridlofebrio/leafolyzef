@@ -56,7 +56,8 @@ class DetailedProductCard extends StatelessWidget {
                           borderRadius:
                               BorderRadius.circular(AppBorderRadius.radiusXS),
                           child: Image.network(
-                            product.image?.path ?? '',
+                            product.image?.path ??
+                                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfUKIbtngBKTWxEbbd7TJpcxLvII6a15DT6g&s',
                             fit: BoxFit.cover,
                             errorBuilder: (_, __, ___) => const Icon(
                               Icons.broken_image,

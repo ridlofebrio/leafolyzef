@@ -1,10 +1,9 @@
 import 'dart:io';
 
 class ApiConfig {
-  // static const String baseUrl = 'https://api.yourdomain.com'; // Production
   static String baseUrl = Platform.isAndroid
-      ? 'http://10.0.2.2:8000' // Android Emulator
-      : 'http://127.0.0.1:8000'; // iOS Simulator
+      ? 'https://160.19.167.23/' // Android 
+      : 'https://160.19.167.23/'; // iOS 
 
   static const String apiVersion = 'v1';
   static const Duration timeout = Duration(seconds: 30);
