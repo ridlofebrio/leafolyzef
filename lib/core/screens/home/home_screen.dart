@@ -17,7 +17,6 @@ import 'package:leafolyze/repositories/detection_repository.dart';
 import 'package:leafolyze/services/api_service.dart';
 import 'package:leafolyze/services/storage_service.dart';
 import 'package:leafolyze/utils/constants.dart';
-import 'package:leafolyze/core/screens/diagnosis/result_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -445,24 +444,18 @@ Widget _buildContent(HistoryState state) {
         final detection = recentDetections[index];
         return GestureDetector(
           onTap: () {
-            // Navigasi ke ResultScreen dengan data yang diperlukan
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => ResultScreen(
-                  detectionId: detection.id ?? 0,
-                  title: detection.title,
-                  diseaseId: detection.diseases?.firstOrNull?.id ?? 0,
-                  imageUrl: detection.image?.path ?? '',
-                  description: 'Deskripsi untuk ${detection.title}',
-                  treatmentTitle: 'Pengobatan', // Ganti dengan data yang sesuai
-                  treatments: [], // Ganti dengan daftar pengobatan yang sesuai
-                  pesticideTitle: 'Pestisida', // Ganti dengan data yang sesuai
-                  pesticides: [], // Ganti dengan daftar pestisida yang sesuai
-                  timestamp: DateTime.now()
-                      .toString(), // Ganti dengan timestamp yang sesuai
-                ),
-              ),
-            );
+            context.push('/diagnose/result', extra: {
+              'detectionId': detection.id ?? 0,
+              'title': detection.title,
+              'diseaseIds': detection.diseases?.map((d) => d.id).toList() ?? [],
+              'imageUrl': detection.image?.path ?? '',
+              'description': 'Deskripsi untuk ${detection.title}',
+              'treatmentTitle': 'Pengobatan',
+              'treatments': [],
+              'pesticideTitle': 'Pestisida',
+              'pesticides': [],
+              'timestamp': DateTime.now().toString(),
+            });
           },
           child: DiagnosisItem(
             imagePath: detection.image?.path ?? '',
@@ -485,4 +478,3 @@ Widget _buildContent(HistoryState state) {
     child: Text('Mulai scan daun untuk melihat diagnosis'),
   );
 }
-
