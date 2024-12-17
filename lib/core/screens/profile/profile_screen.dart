@@ -121,24 +121,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         SizedBox(height: AppSpacing.spacingXL),
                         _buildSectionTitle("Other"),
                         _buildListTile(
-                          icon: Icons.settings_outlined,
-                          title: "Settings",
-                          route: () {
-                            context.go('/profile/settings');
-                          },
-                        ),
-                        _buildListTile(
                           icon: Icons.help_outline,
                           title: "FAQ",
                           route: () {
                             context.go('/profile/faq');
-                          },
-                        ),
-                        _buildListTile(
-                          icon: Icons.headset_mic_outlined,
-                          title: "Help Center",
-                          route: () {
-                            context.go('/profile/help-center');
                           },
                         ),
                         _buildListTile(

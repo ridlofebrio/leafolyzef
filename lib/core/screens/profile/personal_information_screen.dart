@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:leafolyze/blocs/profile/profile_bloc.dart';
 import 'package:leafolyze/blocs/profile/profile_event.dart';
 import 'package:leafolyze/blocs/profile/profile_state.dart';
+import 'package:leafolyze/utils/constants.dart';
 
 class PersonalInformationScreen extends StatefulWidget {
   const PersonalInformationScreen({super.key});
@@ -109,10 +110,11 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                         children: [
                           CircleAvatar(
                             radius: 50,
-                            backgroundImage: _profileImage != null
-                                ? FileImage(_profileImage!)
-                                : AssetImage(
-                                        'assets/images/profile_placeholder.png')
+                            backgroundImage: state is ProfileLoaded &&
+                                    state.user.userDetail?.image?.path != null
+                                ? NetworkImage(
+                                    state.user.userDetail!.image!.path)
+                                : const AssetImage('assets/images/image-11.png')
                                     as ImageProvider,
                           ),
                           TextButton(
@@ -153,11 +155,15 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                               ));
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
+                          backgroundColor: AppColors.primaryColor,
                           padding: const EdgeInsets.symmetric(
                               horizontal: 50, vertical: 15),
                         ),
-                        child: const Text("SAVE"),
+                        child: const Text("SAVE",
+                            style: TextStyle(
+                                fontSize: AppFontSize.fontSizeL,
+                                fontFamily: 'Poppins',
+                                color: Colors.black)),
                       ),
                     ),
                   ],
