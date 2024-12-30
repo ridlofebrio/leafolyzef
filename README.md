@@ -6,8 +6,8 @@ Leafolyze is a mobile application for tomato leaf disease detection and manageme
 
 | Name | NIM | Role |
 |------|-----|------|
-| Fahridana Ahmad Rayyansyah | 2241720158 | Mobile Engineering |
-| Muhammad Ridlo Febrio Putra | 2241720098 | Backend Engineering |
+| Fahridana Ahmad Rayyansyah | 2241720158 | Mobile Engineering, Frontend Engineering|
+| Muhammad Ridlo Febrio Putra | 2241720098 | Mobile Engineering, Backend Engineering |
 | Lilla Nur Wahidiyah | 2241720144 | System Analyst & QA |
 
 ## Features
